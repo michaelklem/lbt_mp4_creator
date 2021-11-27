@@ -1,9 +1,9 @@
 {
 	"db" : {
-		"database"	: "little_bird_tales",
-		"user"		: "mkdev",
-		"password"	: "35y45hgrssh4weg",
-		"host"		: "lbtdevdb.littlebirdtales.com",
+		"database"	: "",
+		"user"		: "",
+		"password"	: "",
+		"host"		: "",
 		"port"		: "3306"
 	},
   "com_lbt_ffmpegpath" : "/usr/local/bin/ffmpeg",
