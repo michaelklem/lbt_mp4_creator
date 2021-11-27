@@ -18,14 +18,35 @@ class Program {
   async process() {
     const story = await this.dm.getNextStory()
     if (story) {
-      logger.info(`Story id found to process: ${story.data.story_id}`);
-    
+      await this.compileVideo(story)
     }
     else {
-      logger.info('No story found to process.');
+      logger.info('[Program.process] No story found to process.');
     }
   }
 
+  async compileVideo(story) {
+    logger.info(`[Program.compileVideo] processing story id: ${story.data.story_id}`)
+    if (! this.isProcessing) {
+      this.isProcessing = true;
+      this.audioFiles = [];
+      this.duration = 0;
+      this.imageCount = 0;
+
+      try {
+        this.dm.startProcessing( story.data.story_id )
+        const story_id = story.data.story_id
+        const user_id = story.data.user_id
+        //setStoryDirectories
+      }
+      catch(err) {
+        logger.info(`[Program.compileVideo] Error: ${err}`)
+      }
+    } // this.isProcessing
+    else {
+      logger.info(`Story: ${story.data.story_id} is already being processed.`)
+    }
+  }
 }
 
 module.exports = Program;

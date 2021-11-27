@@ -38,4 +38,15 @@ module.exports = class DataModel extends QueryRunner {
       return null;
     }
   }  
+
+  async startProcessing(storyId) {
+    try {
+      const query = `update mp4_queue set is_processing = 1 where story_id = ?`
+			await this.query(query, [storyId]);
+    } 
+    catch(err) {
+      logger.error(`[startProcessing] Error: ${err}`);
+      return null;
+    }
+  }
 }
