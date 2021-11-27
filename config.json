@@ -1,0 +1,22 @@
+{
+	"db" : {
+		"database"	: "little_bird_tales",
+		"user"		: "mkdev",
+		"password"	: "35y45hgrssh4weg",
+		"host"		: "lbtdevdb.littlebirdtales.com",
+		"port"		: "3306"
+	},
+  "com_lbt_ffmpegpath" : "/usr/local/bin/ffmpeg",
+  "com_lbt_flvbindpath" : "/usr/local/bin/mp3wrap",
+  "com_lbt_mp4boxpath" : "/usr/local/bin/MP4Box",
+  "com_lbt_userdirectory" : "/srv/www/littlebirdtales.com/httpdocs/users/",
+  "com_lbt_emptyaudio" : "/root/mcsetup/mcutility/testAudio.flv",
+  "com_lbt_defaultimagepath" : "/root/mcsetup/mcutility/page_default.jpg",
+  "com_lbt_textbg" : "/root/mcsetup/mcutility/textBG.png",
+  "com_lbt_tempdirectory" : "/root/mcsetup/mcutility/temp/",
+  "com_lbt_firstimage" : "first.png",
+  "com_lbt_lastimage" : "last.png",
+  "com_lbt_host_name" : "littlebirdtales.com",
+  "ffmpeg_merge_commandline" : "-loop 1 -y -i %image_file% -i %audio_file% -b:v 1200K -ac 2 -shortest  %output_file%",
+  "ffmpeg_build_commandline" : "-i %combined_mpg_files% -vcodec libx264 -vpre ipod640 -c:a libfdk_aac -ac 2 %output_file%"
+}
