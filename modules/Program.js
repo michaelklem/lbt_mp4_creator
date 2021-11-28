@@ -126,7 +126,6 @@ class Program {
       this.tempAudioDirectoryPrefix = this.tempStoryDirectoryPrefix + "Audio/";
       if (fs.existsSync(this.tempStoryDirectoryPrefix)) {
         logger.info('[createDirectories] Deleting directory: ' + this.tempStoryDirectoryPrefix);
-        // fs.rmdirSync(this.tempStoryDirectoryPrefix, { recursive: true });
         fs.rmSync(this.tempStoryDirectoryPrefix, { recursive: true })
       }
 

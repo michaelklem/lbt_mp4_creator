@@ -2,6 +2,7 @@ var Logger = require('./Logger');
 var logger = Logger.logger();
 const fs = require('fs');
 const textToImage = require('text-to-image');
+const HTMLUtil = require('./HTMLUtil');
 
 module.exports = class ImageModel {
   constructor() {
@@ -15,7 +16,10 @@ module.exports = class ImageModel {
 
   async TextOverlay() {
     try {
-      this.text = 'this is a long piece of lame ass text to see how this module works. Actually it is an npm module. My mistake.'
+      // this.text = '   <foo><br/> this is a long piece of lame ass text to see how this module works. Actually it is an npm module. My mistake.<div>sef</div>\r\n  '
+      logger.info('[TextOverlay] before html: ' + this.text)
+      this.text = HTMLUtil.removeHTML(this.text)
+      logger.info('[TextOverlay] after html: ' + this.text)
       // logger.info(`[TextOverlay] reading: ${this.textBG}`)
       // this.image = fs.readFileSync(this.textBG);
       // image = process(image);
@@ -27,13 +31,13 @@ module.exports = class ImageModel {
         margin: 5,
         customHeight: 120
         });
-      logger.info('[TextOverlay] dataUri: ' + dataUri)
+      logger.info('[TextOverlay] text to image data: ' + dataUri)
 
       // strip off the data: url prefix to get just the base64-encoded bytes
-      var data = dataUri.replace(/^data:image\/\w+;base64,/, "");
-      var buf = Buffer.from(data, 'base64');
+      const data = dataUri.replace(/^data:image\/\w+;base64,/, "");
+      const buf = Buffer.from(data, 'base64');
       fs.writeFileSync(this.textImage, buf);    
-      logger.info('[TextOverlay] file save to: ' + this.textImage)
+      logger.info('[TextOverlay] text image file save to: ' + this.textImage)
     }
     catch(err) {
       logger.info('[TextOverlay] Error: ' + err)
