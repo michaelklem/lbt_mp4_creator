@@ -65,7 +65,7 @@ class Program {
           // not using this code
         // }
 
-        await createImage(
+        await this.createImage(
           HTMLUtil.removeHTML(story.data.title),
           this.tempStoryDirectoryPrefix + "text" + story.data.story_id + ".png",
           this.storyImagesDirectoryPrefix + story.data.image_path,
@@ -126,7 +126,8 @@ class Program {
       this.tempAudioDirectoryPrefix = this.tempStoryDirectoryPrefix + "Audio/";
       if (fs.existsSync(this.tempStoryDirectoryPrefix)) {
         logger.info('[createDirectories] Deleting directory: ' + this.tempStoryDirectoryPrefix);
-        fs.rmdirSync(this.tempStoryDirectoryPrefix, { recursive: true });
+        // fs.rmdirSync(this.tempStoryDirectoryPrefix, { recursive: true });
+        fs.rmSync(this.tempStoryDirectoryPrefix, { recursive: true })
       }
 
       if (! fs.existsSync(this.tempUserDirectoryPrefix)) {
@@ -231,13 +232,13 @@ class Program {
   }
 
   async createImage(text, textImage, taleImage, combineImage) {
-    mm.text = text;
-    mm.textImage = textImage;
-    mm.taleImage = taleImage;
-    mm.textBG = this.textBG;
-    mm.combineImage = combineImage;
-    mm.TextOverlay();
-    mm.CreateImage();
+    this.mm.text = text;
+    this.mm.textImage = textImage;
+    this.mm.taleImage = taleImage;
+    this.mm.textBG = this.textBG;
+    this.mm.combineImage = combineImage;
+    await this.mm.TextOverlay();
+    // mm.CreateImage();
   }
 }
 
