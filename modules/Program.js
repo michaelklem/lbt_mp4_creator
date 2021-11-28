@@ -5,7 +5,8 @@ var logger = Logger.logger();
 const config = require('../config.json');
 const fs = require('fs');
 const spawn = require('await-spawn')
-
+const axios = require('axios');
+const HTMLUtil = require('./HTMLUtil');
 
 class Program {
 
@@ -64,10 +65,24 @@ class Program {
           // not using this code
         // }
 
-        if (fs.existsSync(this.lastImagePath)) {
-          await this.createAudioFile(null, this.tempAudioDirectoryPrefix+ "last" + story.story_id + ".flv");
-          // this.createCopies(this.lastImagePath, 0);
-        }
+        await createImage(
+          HTMLUtil.removeHTML(story.data.title),
+          this.tempStoryDirectoryPrefix + "text" + story.data.story_id + ".png",
+          this.storyImagesDirectoryPrefix + story.data.image_path,
+          this.tempStoryDirectoryPrefix + story.data.story_id + ".png");
+
+        await this.createAudioFile(
+          this.storyAudioDirectoryPrefix + story.data.audio_path,
+          this.tempAudioDirectoryPrefix,
+          this.remoteAudioFilePath + story.data.audio_path,
+          `story${story.data.story_id}.flv`);
+
+        // await createCopies(tempStoryDirectoryPrefix + nextStory.getStoryId() + ".png", duration);
+
+        // if (fs.existsSync(this.lastImagePath)) {
+        //   await this.createAudioFile(null, this.tempAudioDirectoryPrefix+ "last" + story.data.story_id + ".flv", null);
+        //   // this.createCopies(this.lastImagePath, 0);
+        // }
       }
       catch(err) {
         logger.info(`[Program.compileVideo] Error: ${err}`)
@@ -81,9 +96,13 @@ class Program {
   setStoryDirectories() {
     try {
       this.storyDirectoryPrefix = this.directoryPrefix + this.user_id + "/";
+      this.remoteUsersdirectory = config.remoteUsersdirectory + this.user_id + "/";
       this.storyImagesDirectoryPrefix = this.storyDirectoryPrefix + "images/";
       this.storyAudioDirectoryPrefix = this.storyDirectoryPrefix + "audio/";
       this.storyVideoDirectoryPrefix = this.storyDirectoryPrefix + "video/";
+      this.remoteAudioFilePath = this.remoteUsersdirectory + "audio/";
+      this.remoteImageFilePath = this.remoteUsersdirectory + "images/";
+
       logger.info('[setStoryDirectories] exists test: ' + this.storyVideoDirectoryPrefix)
       if (! fs.existsSync(this.storyVideoDirectoryPrefix)) {
         fs.mkdirSync(this.storyVideoDirectoryPrefix, { recursive: true })
@@ -135,10 +154,36 @@ class Program {
     }
   } // create directories
 
-  async createAudioFile(sourcePath, destPath) {
+  async createAudioFile(sourcePath, destPath, remoteFile, destFileName) {
     try {
       if (sourcePath != null && sourcePath != "") {
         logger.info('[createAudioFile] sourcePath: ' + sourcePath);
+        logger.info('[createAudioFile] destPath: ' + destPath);
+        logger.info('[createAudioFile] remoteFile: ' + remoteFile);
+        logger.info('[createAudioFile] destFileName: ' + destFileName);
+
+        console.log(`[createAudioFile] Downloading audio file: ${remoteFile} to ${destPath}`)
+        try {
+          const payload = {"bucketName": "lbtassets232304", 
+          "sourceFile": remoteFile, 
+          "sourceFileMed": '',
+          "sourceFileSml": '',
+
+          "destinationFileDirectory": destPath, 
+          "destinationFileName": destFileName, 
+          "destinationFileNameMed": '', 
+          "destinationFileNameSml": '', 
+          };
+
+          const url = `${config.storj_service_url}downloadSelectedImage`;
+          console.log(`[createAudioFile] download file url: ${url}`);
+          const response = await axios.post(url, payload)
+          console.log('[createAudioFile] response' + JSON.stringify(response.data));
+        } catch (error) {
+          console.log('[createAudioFile] Downloading error ' + error);
+        }
+
+        sourcePath = destPath + destFileName
         let duration = await this.getDuration(sourcePath);
         if (duration === 0) {
           sourcePath = this.emptyAudio;
@@ -147,24 +192,20 @@ class Program {
       else
       {
         sourcePath = this.emptyAudio;
-        let duration = await this.getDuration(sourcePath);
-
+        // Copy the source to the temp directory to be worked on
+        // logger.info(`[createAudioFile] copying ${sourcePath} to ${destPath}`);
+        fs.copyFileSync(sourcePath, destPath);
       }
 
-      // Copy the source to the temp directory to be worked on
-      logger.info(`[createAudioFile] copying ${sourcePath} to ${destPath}`);
-      fs.copyFileSync(sourcePath, destPath);
-      this.audioFiles.push(destPath)
+      this.audioFiles.push(sourcePath)
     }
     catch(err){
-      logger.info('[createAudioFile] Error: ' + err)
+      logger.info('[createAudioFile] Error: ' + err.stack)
     }
   }
 
   // call system command to get duration:
-  // ffprobe -i testAudio.flv -show_entries format=duration -v quiet -of csv="p=0"
   // ffprobe -v quiet -print_format compact=print_section=0:nokey=1:escape=csv -show_entries format=duration "/opt/mp4_utility/testAudio.flv"
-
   // which returns duration in seconds 5.434000 for 5.43 seconds
   async getDuration(filePath) {
     let duration = 0;
@@ -172,10 +213,6 @@ class Program {
     try {
       logger.info('[getDuration] filePath: ' + filePath)
 
-      let cmd = config.ffprobe_commandline;
-      cmd = cmd.replace('%input_file%', filePath);
-
-      logger.info('[getDuration] cmd: ' + cmd);
       let args = [
           '-i', filePath,
           '-v','quiet',
@@ -192,7 +229,16 @@ class Program {
       throw e
     }
   }
-  
+
+  async createImage(text, textImage, taleImage, combineImage) {
+    mm.text = text;
+    mm.textImage = textImage;
+    mm.taleImage = taleImage;
+    mm.textBG = this.textBG;
+    mm.combineImage = combineImage;
+    mm.TextOverlay();
+    mm.CreateImage();
+  }
 }
 
 module.exports = Program;
