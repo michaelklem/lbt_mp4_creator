@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "await-spawn": "^4.0.2",
     "dotenv": "^10.0.0",
     "mysql": "^2.18.1",
     "winston": "^3.2.1"
