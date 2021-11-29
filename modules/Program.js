@@ -7,6 +7,7 @@ const fs = require('fs');
 const spawn = require('await-spawn')
 const axios = require('axios');
 const HTMLUtil = require('./HTMLUtil');
+const { execSync } = require('child_process');
 
 class Program {
 
@@ -143,7 +144,11 @@ class Program {
         //   // this.createCopies(this.lastImagePath, 0);
         // }
 
-        this.mergeAudio(story.data.story_id)
+        // concatenate all image and audio mpg files into a single mpg file
+        this.concatenateFiles() // for testing
+        // buildMP4( this.concatenateFiles(), nextStory );
+
+        // this.mergeAudio(story.data.story_id)
       }
       catch(err) {
         logger.info(`[Program.compileVideo] Error: ${err.stack}`)
@@ -346,12 +351,10 @@ class Program {
 
       try {
         await spawn(`/usr/local/bin/ffmpeg`, args)
-
-        // await spawn(`/usr/local/bin/ffmpeg ${command}`, []);
         this.combineMPGFiles.push(output_file);
       }
       catch(err) {
-        console.log('Spawn error: ' + err)
+        console.log('[combineImageAndAudio] Spawn error: ' + err)
       }
     }
     catch(err) {
@@ -402,15 +405,34 @@ class Program {
         logger.info(`[mergeAudio] infilename: ${infilename}`)
         logger.info(`[mergeAudio] outfilename: ${outfilename}`)
 
+        if (await fs.existsSync(audioFile)) {
+          logger.info("[mergeAudio] audioFile exists "+ audioFile);
+        }
+
         let args = [
             '-i', `${infilename}.flv`,
             '-acodec', 'libmp3lame',
             '-y',outfilename
         ];
 
-        await spawn('/usr/local/bin/ffmpeg', args);
-        mergecmdPart += outfilename
-
+        args = [
+            `-i ${infilename}.flv`,
+            '-acodec libmp3lame',
+            `-y ${outfilename}`
+        ];
+        try {
+          // /usr/local/bin/ffmpeg -i /opt/mp4_utility/temp/4/789439/audio/0.flv -acodec libmp3lame -y /opt/mp4_utility/temp/4/789439/audio/0.mp3
+          // /usr/local/bin/ffmpeg -i /opt/mp4_utility/temp/4/789439/audio/0.flv -acodec libmp3lame -y /opt/mp4_utility/temp/4/789439/audio/0.mp3
+          logger.info(`[mergeAudio] ffmpeg 1: ${args}`)
+          // await spawn('/usr/local/bin/ffmpeg', args);
+          // await spawn('/usr/local/bin/ffmpeg', args);
+          execSync(`/usr/local/bin/ffmpeg -i ${infilename}.flv -acodec libmp3lame -y ${outfilename}`, { stdio: 'ignore' });
+          mergecmdPart += outfilename
+        }
+        catch(err) {
+          logger.info('[mergeAudio] Error: ' + err.stack);
+          throw err;
+        }
 
 
         // command = ffmpegPath + " -f image2 -r 10 -i " +  tempImagesDirectoryPrefix+"%05d.png"+ " -i " + OutAudioFilePart +  " -vcodec libx264 -vpre slow -acodec libfaac -y " + tempVOutFilePart;
@@ -425,8 +447,14 @@ class Program {
             '-y', tempVOutFilePart
         ];
 
-        await spawn('/usr/local/bin/ffmpeg', args);
-
+        try {
+          logger.info(`[mergeAudio] ffmpeg 2: ${args}`)
+          // await spawn('/usr/local/bin/ffmpeg', args);
+          execSync(`/usr/local/bin/ffmpeg -f image2 -r 10 -i ${this.tempImagesDirectoryPrefix}%05d.png -i ${OutAudioFilePart} -vcodec libx264 -vpre slow -acodec libfaac -y ${tempVOutFilePart}`, { stdio: 'ignore' });
+        }
+        catch(err) {
+          logger.info('[mergeAudio] 2 Error: ' + err);
+        }
         // deleteDirectory tempStoryDirectoryPrefix
       } // for
     }
@@ -434,6 +462,26 @@ class Program {
       logger.info(`[mergeAudio] Error: ${err.stack}`)
     }
   }
+
+	// iterate over all files in combineMPGFiles and cat them together
+	concatenateFiles() {
+    const output_filename = this.tempVideoDirectoryPrefix + "combined.mpg";
+    logger.info("[concatenateFiles] output_filename: " + output_filename);
+
+    let buffer = '';
+    for (let i=0; i < this.combineMPGFiles.length; i++)
+		{
+      const temp = this.combineMPGFiles[i];
+			logger.info("[concatenateFiles] combining file " + temp);
+			buffer += temp + " ";
+		}
+
+    // write these file names to the output file
+    logger.info("[concatenateFiles] data: " + buffer);
+    fs.writeFileSync(output_filename, buffer);
+    logger.info("[concatenateFiles] Done");
+  }
+
 }
 
 module.exports = Program;
