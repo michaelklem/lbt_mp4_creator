@@ -77,7 +77,7 @@ class Program {
           this.remoteAudioFilePath + story.data.audio_path,
           `story${story.data.story_id}.flv`);
 
-        // await createCopies(tempStoryDirectoryPrefix + nextStory.getStoryId() + ".png", duration);
+        await this.createCopies(this.tempStoryDirectoryPrefix + story.data.story_id + ".png", this.duration);
 
         // if (fs.existsSync(this.lastImagePath)) {
         //   await this.createAudioFile(null, this.tempAudioDirectoryPrefix+ "last" + story.data.story_id + ".flv", null);
@@ -85,7 +85,7 @@ class Program {
         // }
       }
       catch(err) {
-        logger.info(`[Program.compileVideo] Error: ${err}`)
+        logger.info(`[Program.compileVideo] Error: ${err.stack}`)
       }
     } // this.isProcessing
     else {
@@ -184,8 +184,8 @@ class Program {
         }
 
         sourcePath = destPath + destFileName
-        let duration = await this.getDuration(sourcePath);
-        if (duration === 0) {
+        this.duration = await this.getDuration(sourcePath);
+        if (this.duration === 0) {
           sourcePath = this.emptyAudio;
         }
       }
@@ -222,7 +222,7 @@ class Program {
 
       duration = await spawn('/usr/bin/ffprobe', args);
       console.log('[getDuration] duration: ' + duration)
-      return duration
+      return Math.ceil(duration)
     } 
     catch (e) {
       console.log('[getDuration] Error: ' + e.stderr.toString())
@@ -237,7 +237,32 @@ class Program {
     this.mm.textBG = this.textBG;
     this.mm.combineImage = combineImage;
     await this.mm.TextOverlay();
-    // mm.CreateImage();
+    this.mm.CreateImage();
+  }
+
+  async createCopies(imagePath, duration) {
+    logger.info('[createCopies] duration: ' + duration)
+    let numberofCopies = 0;
+
+    if (duration !== 0) {
+      const miliseconds = 1000;
+      const minutes = duration/60;
+      // think 54 is supposed to be 5 seconds so 54 * 12 = 648 per minute?
+      numberofCopies = Math.ceil(minutes * 648);
+    }
+    else {
+      numberofCopies=54;
+    }
+
+    logger.info('[createCopies] numberofCopies: ' + numberofCopies)
+
+    for (let i=0; i < numberofCopies; i++) {
+      const destination = `${this.tempImagesDirectoryPrefix}${this.imageCount}.png`;
+      logger.info(`[createCopies] copying: ${imagePath} to ${destination}`)
+
+      await fs.copyFileSync(imagePath, destination);
+      this.imageCount++;
+    }
   }
 }
 
