@@ -27,6 +27,25 @@ module.exports = class DataModel extends QueryRunner {
     }
   }
 
+  async getPages(story_id) {
+    let pages = null;
+
+    try {
+      const query = `select * from story_pages where story_id = ? and page_num != -1 order by page_num
+`;
+			let results = await this.query(query,[story_id]);
+      if (results) {
+        pages =  results;
+      }
+
+      return pages;
+    } 
+    catch(err) {
+      logger.error(`[getPages] Error: ${err}`);
+      return null;
+    }
+  }
+
   async getStory(storyId) {
     try {
       const s = new Story(storyId);

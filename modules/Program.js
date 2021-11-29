@@ -79,6 +79,16 @@ class Program {
 
         await this.createCopies(this.tempStoryDirectoryPrefix + story.data.story_id + ".png", this.duration);
 
+
+        let _storyPages = [];
+        if (story) {
+          const storyPages = await this.dm.getPages(story.data.story_id);
+          for (let page of storyPages) {
+            console.log('xxxxx pages: ' + JSON.stringify(page))
+          }
+        
+        } // if story
+
         // if (fs.existsSync(this.lastImagePath)) {
         //   await this.createAudioFile(null, this.tempAudioDirectoryPrefix+ "last" + story.data.story_id + ".flv", null);
         //   // this.createCopies(this.lastImagePath, 0);

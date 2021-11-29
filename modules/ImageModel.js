@@ -66,6 +66,7 @@ module.exports = class ImageModel {
     }
   }
 
+  // combines the page art and text image
   async CreateImage() {
     try {
       if (! fs.existsSync(this.taleImage)) {
@@ -80,8 +81,6 @@ module.exports = class ImageModel {
         Image: Image,
         height:420 + 120 // height of art and text images
       })
-        //.then(b64 => ...);
-      // logger.info('[CreateImage] buf: ' + buf)
 
       // strip off the data: url prefix to get just the base64-encoded bytes
       const data = dataUri.replace(/^data:image\/\w+;base64,/, "");
