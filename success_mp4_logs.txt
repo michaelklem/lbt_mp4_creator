@@ -1,0 +1,754 @@
+Logs from lbt production
+
+/usr/bin/java -jar -Dfile.encoding=iso-8859-1 /root/mcsetup/mcutility/mcutility.jar property_file littlebirdtale_en_US_lbtprod.properties
+property_file
+XXX propertiesFileName littlebirdtale_en_US_lbtprod.properties
+/root/mcsetup/mcutility
+Executing SELECT mp4_id, story_id, buyer_user_id, is_processing, is_complied, date_complied, is_error, process_as_mp4, mp4_job_requested_date, mp4_job_completed_date, file_name FROM mp4_queue WHERE process_as_mp4 = 1 order by mp4_job_requested_date asc LIMIT 1
+Executing SELECT story_id, user_id, title, author, image_path, image_path_med, image_path_sml, public, date_created, date_modified, contest_related, featured, craft, unsaved, audio_path, is_processing, is_complied, date_complied, is_error, process_as_mp4, mp4_job_requested_date, mp4_job_completed_date, file_name, is_audio_muted FROM stories WHERE story_id = ? ORDER BY story_id
+XXX story com.lbt.dto.Stories: storyId=788582, userId=4, title=From gallery: Mike's Tale6y777, author=Mike, imagePath=cover.788582.43094d722149100715e17c294c9947d0.jpg, imagePathMed=cover.med.788582.43094d722149100715e17c294c9947d0.jpg, imagePathSml=cover.sml.788582.43094d722149100715e17c294c9947d0.jpg, aPublic=0, dateCreated=2021-09-03 13:56:58.0, dateModified=2021-11-28 21:28:13.0, contestRelated=0, featured=0, craft=0, unsaved=0, audioPath=cover.788582.ec57f82280b4ca812cd40c4e5f0c5f78.flv, isProcessing=0, isComplied=0, dateComplied=null, isError=0, processAsMp4=0, mp4JobCompletedDate=null, isAudioMuted=false
+788582, 4, From gallery: Mike's Tale6y777, Mike, cover.788582.43094d722149100715e17c294c9947d0.jpg, cover.med.788582.43094d722149100715e17c294c9947d0.jpg, cover.sml.788582.43094d722149100715e17c294c9947d0.jpg, 0, 2021-09-03 13:56:58.0, 2021-11-28 21:28:13.0, 0, 0, 0, 0, cover.788582.ec57f82280b4ca812cd40c4e5f0c5f78.flv, 0, 0, null, 0, muted: false
+xxxxxxxx Start MP4 compilation for 788582 at Sun Nov 28 21:30:41 PST 2021
+Executing UPDATE stories SET story_id = ?, user_id = ?, title = ?, author = ?, image_path = ?, image_path_med = ?, image_path_sml = ?, public = ?, date_created = ?, date_modified = ?, contest_related = ?, featured = ?, craft = ?, unsaved = ?, audio_path = ?, is_processing = ?, is_complied = ?, date_complied = ?, is_error = ?, process_as_mp4 = ?, mp4_job_completed_date = ?, file_name = ? WHERE story_id = ? with DTO: com.lbt.dto.Stories: storyId=788582, userId=4, title=From gallery: Mike's Tale6y777, author=Mike, imagePath=cover.788582.43094d722149100715e17c294c9947d0.jpg, imagePathMed=cover.med.788582.43094d722149100715e17c294c9947d0.jpg, imagePathSml=cover.sml.788582.43094d722149100715e17c294c9947d0.jpg, aPublic=0, dateCreated=2021-09-03 13:56:58.0, dateModified=2021-11-28 21:28:13.0, contestRelated=0, featured=0, craft=0, unsaved=0, audioPath=cover.788582.ec57f82280b4ca812cd40c4e5f0c5f78.flv, isProcessing=1, isComplied=0, dateComplied=null, isError=0, processAsMp4=0, mp4JobCompletedDate=null, isAudioMuted=false
+1 rows affected (29 ms)
+Executing SELECT user_id, first_name, last_name, email, password, date_added, date_modified, confirmation_code, confirmed, admin, paid, subscription_expires, subscription_years, reminder_sent, canceled, cancel_date, demo_account, bucket_path FROM users WHERE user_id = ? ORDER BY user_id
+Directory: /root/mcsetup/mcutility/temp/4/788582/ created
+Directory: /root/mcsetup/mcutility/temp/4/788582/images/ created
+Directory: /root/mcsetup/mcutility/temp/4/788582/audio/ created
+Directory: /root/mcsetup/mcutility/temp/4/788582/video/ created
+createImage: text: From gallery: Mike's Tale6y777
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text0.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/cover.788582.43094d722149100715e17c294c9947d0.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/0.png
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/cover.788582.ec57f82280b4ca812cd40c4e5f0c5f78.flv
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/0.flv
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/0.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/0.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/0.png -i /root/mcsetup/mcutility/temp/4/788582/audio/0.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/0.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/0.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/0.flv':
+  Metadata:
+    encoder         : Lavf56.31.100
+  Duration: 00:00:02.36, start: 0.000000, bitrate: 70 kb/s
+    Stream #1:0: Audio: mp3, 44100 Hz, mono, s16p, 64 kb/s
+[mpeg @ 0x2bc7c00] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/0.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:0 -> #0:1 (mp3 (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=   62 fps=0.0 q=2.0 Lsize=     410kB time=00:00:02.44 bitrate=1376.5kbits/s    
+video:294kB audio:111kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.135072%
+
+Executing SELECT story_page_id, story_id, body, page_num, image_path, image_path_med, image_path_sml, audio_path, date_created, date_modified, unsaved, is_audio_muted FROM story_pages WHERE story_id=788582 and page_num > 0 ORDER BY page_num
+XXXX story pages found [Lcom.lbt.dto.StoryPages;@51ab7891
+XXXX body: 
+3771226, 788582, , 1, page.3771226.43e65136dd26a7003287d3bb338a72bf.jpg, page.med.3771226.43e65136dd26a7003287d3bb338a72bf.jpg, page.sml.3771226.43e65136dd26a7003287d3bb338a72bf.jpg, page.3771226.878637dc50dc30f95de5791b7b04fe7c.flv, 2021-09-03 13:56:58.0, 2021-11-28 21:28:01.0, 0, muted:false
+XXXX body: 
+3771227, 788582, , 2, page.3771227.17dacc4846318f5629948e49f20d65c1.jpg, page.med.3771227.17dacc4846318f5629948e49f20d65c1.jpg, page.sml.3771227.17dacc4846318f5629948e49f20d65c1.jpg, page.3771227.862af4e08c15f91574bbc615132bcaac.flv, 2021-09-03 13:56:58.0, 2021-11-28 21:28:13.0, 0, muted:false
+3771228, 788582, , 3, page.3771228.50b4b961c4ff0855f94fefbf03794674.jpg, page.med.3771228.50b4b961c4ff0855f94fefbf03794674.jpg, page.sml.3771228.50b4b961c4ff0855f94fefbf03794674.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771229, 788582, , 4, page.3771229.dc6f47dd8488adc49e0416174ab2c32c.jpg, page.med.3771229.dc6f47dd8488adc49e0416174ab2c32c.jpg, page.sml.3771229.dc6f47dd8488adc49e0416174ab2c32c.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771230, 788582, , 5, page.3771230.4c00f65d51c4c4c67978a648f90bc458.jpg, page.med.3771230.4c00f65d51c4c4c67978a648f90bc458.jpg, page.sml.3771230.4c00f65d51c4c4c67978a648f90bc458.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771231, 788582, , 6, page.3771231.9678df64fb3b330088f56499b95c62e1.jpg, page.med.3771231.9678df64fb3b330088f56499b95c62e1.jpg, page.sml.3771231.9678df64fb3b330088f56499b95c62e1.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771232, 788582, , 7, page.3771232.037364862c21e703f81ee687a1180f7d.jpg, page.med.3771232.037364862c21e703f81ee687a1180f7d.jpg, page.sml.3771232.037364862c21e703f81ee687a1180f7d.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771233, 788582, , 8, page.3771233.d1906d26fb38a53e90c2e9bf7a2f295e.jpg, page.med.3771233.d1906d26fb38a53e90c2e9bf7a2f295e.jpg, page.sml.3771233.d1906d26fb38a53e90c2e9bf7a2f295e.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771234, 788582, , 9, page.3771234.04288ed26ab3b31c525d80358d3e90a0.jpg, page.med.3771234.04288ed26ab3b31c525d80358d3e90a0.jpg, page.sml.3771234.04288ed26ab3b31c525d80358d3e90a0.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771235, 788582, , 10, page.3771235.7b3d36bc7f7dd24c3cc470d3002c0d21.jpg, page.med.3771235.7b3d36bc7f7dd24c3cc470d3002c0d21.jpg, page.sml.3771235.7b3d36bc7f7dd24c3cc470d3002c0d21.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+3771236, 788582, , 11, page.3771236.86943248d1334ab040e97a434ac21309.jpg, page.med.3771236.86943248d1334ab040e97a434ac21309.jpg, page.sml.3771236.86943248d1334ab040e97a434ac21309.jpg, null, 2021-09-03 13:56:58.0, 2021-09-03 13:56:58.0, 0, muted:false
+XXXX body: 
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text1.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771226.43e65136dd26a7003287d3bb338a72bf.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/1.png
+XXX page audio page.3771226.878637dc50dc30f95de5791b7b04fe7c.flv
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/page.3771226.878637dc50dc30f95de5791b7b04fe7c.flv
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/1.flv
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/1.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/1.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/1.png -i /root/mcsetup/mcutility/temp/4/788582/audio/1.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/1.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/1.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/1.flv':
+  Metadata:
+    encoder         : Lavf56.31.100
+  Duration: 00:00:02.48, start: 0.000000, bitrate: 70 kb/s
+    Stream #1:0: Audio: mp3, 44100 Hz, mono, s16p, 64 kb/s
+[mpeg @ 0x3977100] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/1.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:0 -> #0:1 (mp3 (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=   65 fps=0.0 q=2.0 Lsize=     392kB time=00:00:02.56 bitrate=1254.4kbits/s    
+video:270kB audio:118kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.081556%
+
+XXXX body: 
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text2.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771227.17dacc4846318f5629948e49f20d65c1.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/2.png
+XXX page audio page.3771227.862af4e08c15f91574bbc615132bcaac.flv
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/page.3771227.862af4e08c15f91574bbc615132bcaac.flv
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/2.flv
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/2.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/2.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/2.png -i /root/mcsetup/mcutility/temp/4/788582/audio/2.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/2.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/2.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/2.flv':
+  Metadata:
+    encoder         : Lavf56.31.100
+  Duration: 00:00:03.38, start: 0.000000, bitrate: 69 kb/s
+    Stream #1:0: Audio: mp3, 44100 Hz, mono, s16p, 64 kb/s
+[mpeg @ 0x332a100] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/2.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:0 -> #0:1 (mp3 (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=   87 fps=0.0 q=2.0 Lsize=     526kB time=00:00:03.44 bitrate=1252.6kbits/s    
+video:361kB audio:159kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.070709%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text3.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771228.50b4b961c4ff0855f94fefbf03794674.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/3.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/3.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/3.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/3.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/3.png -i /root/mcsetup/mcutility/temp/4/788582/audio/3.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/3.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/3.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x2b8b3a0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/3.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x2be0380] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/3.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     808kB time=00:00:05.56 bitrate=1190.5kbits/s    
+video:545kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.715263%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text4.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771229.dc6f47dd8488adc49e0416174ab2c32c.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/4.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/4.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/4.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/4.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/4.png -i /root/mcsetup/mcutility/temp/4/788582/audio/4.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/4.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/4.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x3b1b3a0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/4.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x3b70380] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/4.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     808kB time=00:00:05.56 bitrate=1190.5kbits/s    
+video:545kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.715263%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text5.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771230.4c00f65d51c4c4c67978a648f90bc458.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/5.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/5.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/5.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/5.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/5.png -i /root/mcsetup/mcutility/temp/4/788582/audio/5.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/5.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/5.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x29af6c0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/5.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x29e21e0] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/5.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     754kB time=00:00:05.56 bitrate=1110.9kbits/s    
+video:490kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.921117%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text6.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771231.9678df64fb3b330088f56499b95c62e1.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/6.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/6.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/6.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/6.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/6.png -i /root/mcsetup/mcutility/temp/4/788582/audio/6.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/6.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/6.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x3f8c3a0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/6.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x3fe1380] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/6.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     808kB time=00:00:05.56 bitrate=1190.5kbits/s    
+video:545kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.715263%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text7.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771232.037364862c21e703f81ee687a1180f7d.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/7.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/7.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/7.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/7.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/7.png -i /root/mcsetup/mcutility/temp/4/788582/audio/7.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/7.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/7.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x30d43a0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/7.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x3129380] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/7.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     808kB time=00:00:05.56 bitrate=1190.5kbits/s    
+video:545kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.715263%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text8.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771233.d1906d26fb38a53e90c2e9bf7a2f295e.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/8.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/8.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/8.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/8.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/8.png -i /root/mcsetup/mcutility/temp/4/788582/audio/8.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/8.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/8.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x37603a0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/8.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x37b5380] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/8.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     808kB time=00:00:05.56 bitrate=1190.5kbits/s    
+video:545kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.715263%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text9.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771234.04288ed26ab3b31c525d80358d3e90a0.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/9.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/9.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/9.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/9.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/9.png -i /root/mcsetup/mcutility/temp/4/788582/audio/9.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/9.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/9.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x22f33a0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/9.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x2348380] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/9.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     808kB time=00:00:05.56 bitrate=1190.5kbits/s    
+video:545kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.715263%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text10.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771235.7b3d36bc7f7dd24c3cc470d3002c0d21.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/10.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/10.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/10.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/10.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/10.png -i /root/mcsetup/mcutility/temp/4/788582/audio/10.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/10.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/10.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x2d982e0] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/10.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x2df6ec0] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/10.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     484kB time=00:00:05.56 bitrate= 713.1kbits/s    
+video:221kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.276542%
+
+createImage: text: 
+createImage: textImage: /root/mcsetup/mcutility/temp/4/788582/images/text11.png
+createImage: taleImage: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/images/page.3771236.86943248d1334ab040e97a434ac21309.jpg
+createImage: combineImage: /root/mcsetup/mcutility/temp/4/788582/images/11.png
+XXX page audio null
+XXXXX createAudioFile /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+XXXXXX destPath /root/mcsetup/mcutility/temp/4/788582/audio/11.flv
+xxx emptyAudio: /srv/www/littlebirdtales.com/httpdocs/users/a/3/2/1/4/audio/null
+combineImageAndAudio image /root/mcsetup/mcutility/temp/4/788582/images/11.png
+combineImageAndAudio audio /root/mcsetup/mcutility/temp/4/788582/audio/11.flv
+FFMPEG combineImageAndAudio ================ /usr/local/bin/ffmpeg -loop 1 -y -i /root/mcsetup/mcutility/temp/4/788582/images/11.png -i /root/mcsetup/mcutility/temp/4/788582/audio/11.flv -b:v 1200K -ac 2 -shortest  /root/mcsetup/mcutility/temp/4/788582/video/11.mpg
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, png_pipe, from '/root/mcsetup/mcutility/temp/4/788582/images/11.png':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: png, rgba, 600x570, 25 fps, 25 tbr, 25 tbn, 25 tbc
+[flv @ 0x3406420] Could not find codec parameters for stream 0 (Video: none, none): unknown codec
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+Input #1, flv, from '/root/mcsetup/mcutility/temp/4/788582/audio/11.flv':
+  Metadata:
+    creationdate    : Thu Mar 17 11:22:35
+  Duration: 00:00:05.43, start: 0.000000, bitrate: 91 kb/s
+    Stream #1:0: Video: none, none, 1k tbr, 1k tbn, 1k tbc
+    Stream #1:1: Audio: nellymoser, 44100 Hz, mono, flt
+[mpeg @ 0x3473c40] VBV buffer size not set, using default size of 130KB
+If you want the mpeg file to be compliant to some specification
+Like DVD, VCD or others, make sure you set the correct buffer size
+Output #0, mpeg, to '/root/mcsetup/mcutility/temp/4/788582/video/11.mpg':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: mpeg1video, yuv420p, 600x570, q=2-31, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 mpeg1video
+    Stream #0:1: Audio: mp2, 44100 Hz, stereo, s16, 384 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 mp2
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> mpeg1video (native))
+  Stream #1:1 -> #0:1 (nellymoser (native) -> mp2 (native))
+Press [q] to stop, [?] for help
+frame=  140 fps=0.0 q=2.0 Lsize=     484kB time=00:00:05.56 bitrate= 713.1kbits/s    
+video:221kB audio:257kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.214080%
+
+combining file /root/mcsetup/mcutility/temp/4/788582/video/0.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/1.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/2.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/3.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/4.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/5.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/6.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/7.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/8.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/9.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/10.mpg
+combining file /root/mcsetup/mcutility/temp/4/788582/video/11.mpg
+concatenateFiles command: /bin/cat /root/mcsetup/mcutility/temp/4/788582/video/0.mpg /root/mcsetup/mcutility/temp/4/788582/video/1.mpg /root/mcsetup/mcutility/temp/4/788582/video/2.mpg /root/mcsetup/mcutility/temp/4/788582/video/3.mpg /root/mcsetup/mcutility/temp/4/788582/video/4.mpg /root/mcsetup/mcutility/temp/4/788582/video/5.mpg /root/mcsetup/mcutility/temp/4/788582/video/6.mpg /root/mcsetup/mcutility/temp/4/788582/video/7.mpg /root/mcsetup/mcutility/temp/4/788582/video/8.mpg /root/mcsetup/mcutility/temp/4/788582/video/9.mpg /root/mcsetup/mcutility/temp/4/788582/video/10.mpg /root/mcsetup/mcutility/temp/4/788582/video/11.mpg  > /root/mcsetup/mcutility/temp/4/788582/video/combined.mpg
+
+FFMPEG ================ /usr/local/bin/ffmpeg -i /root/mcsetup/mcutility/temp/4/788582/video/combined.mpg -vcodec libx264 -vpre ipod640 -c:a libfdk_aac -ac 2 /srv/www/littlebirdtales.com/httpdocs/users/video/littlebirdtales_movie-1638163849425.mp4 
+MP4 file can be found here ================ /srv/www/littlebirdtales.com/httpdocs/users/video/littlebirdtales_movie-1638163849425.mp4 
+ffmpeg version git-2015-05-02-4e8ee7a Copyright (c) 2000-2015 the FFmpeg developers
+  built with gcc 4.8.3 (GCC) 20140911 (Red Hat 4.8.3-9)
+  configuration: --prefix=/root/ffmpeg_build --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --pkg-config-flags=--static --enable-gpl --enable-nonfree --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfreetype --enable-libtheora
+  libavutil      54. 23.101 / 54. 23.101
+  libavcodec     56. 35.101 / 56. 35.101
+  libavformat    56. 31.100 / 56. 31.100
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 14.100 /  5. 14.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+Input #0, mpeg, from '/root/mcsetup/mcutility/temp/4/788582/video/combined.mpg':
+  Duration: 00:00:05.57, start: 0.529089, bitrate: 11613 kb/s
+    Stream #0:0[0x1e0]: Video: mpeg1video, yuv420p(tv), 600x570 [SAR 1:1 DAR 20:19], 104857 kb/s, 25 fps, 25 tbr, 90k tbn, 25 tbc
+    Stream #0:1[0x1c0]: Audio: mp2, 44100 Hz, stereo, s16p, 384 kb/s
+[libx264 @ 0x2e57340] using SAR=1/1
+[libx264 @ 0x2e57340] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 AVX2 LZCNT BMI2
+[libx264 @ 0x2e57340] profile Constrained Baseline, level 3.0
+[libx264 @ 0x2e57340] 264 - core 146 r2 121396c - H.264/MPEG-4 AVC codec - Copyleft 2003-2015 - http://www.videolan.org/x264.html - options: cabac=0 ref=3 deblock=1:0:0 analyse=0x1:0x111 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=0 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=12 lookahead_threads=2 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=0 weightp=0 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 vbv_maxrate=10000 vbv_bufsize=10000 crf_max=0.0 nal_hrd=none filler=0 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to '/srv/www/littlebirdtales.com/httpdocs/users/video/littlebirdtales_movie-1638163849425.mp4':
+  Metadata:
+    encoder         : Lavf56.31.100
+    Stream #0:0: Video: h264 (libx264) ([33][0][0][0] / 0x0021), yuv420p, 600x570 [SAR 1:1 DAR 20:19], q=-1--1, max. 10000 kb/s, 25 fps, 12800 tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.35.101 libx264
+    Stream #0:1: Audio: aac (libfdk_aac) ([64][0][0][0] / 0x0040), 44100 Hz, stereo, s16, 128 kb/s
+    Metadata:
+      encoder         : Lavc56.35.101 libfdk_aac
+Stream mapping:
+  Stream #0:0 -> #0:0 (mpeg1video (native) -> h264 (libx264))
+  Stream #0:1 -> #0:1 (mp2 (native) -> aac (libfdk_aac))
+Press [q] to stop, [?] for help
+frame= 1446 fps=361 q=-1.0 Lsize=    1154kB time=00:00:57.84 bitrate= 163.5kbits/s dup=0 drop=28    
+video:210kB audio:904kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 3.621986%
+[libx264 @ 0x2e57340] frame I:8     Avg QP:11.87  size: 20613
+[libx264 @ 0x2e57340] frame P:1438  Avg QP:12.28  size:    35
+[libx264 @ 0x2e57340] mb I  I16..4: 75.3%  0.0% 24.7%
+[libx264 @ 0x2e57340] mb P  I16..4:  0.0%  0.0%  0.0%  P16..4:  0.3%  0.0%  0.0%  0.0%  0.0%    skip:99.7%
+[libx264 @ 0x2e57340] coded y,uvDC,uvAC intra: 19.1% 11.4% 9.3% inter: 0.1% 0.1% 0.0%
+[libx264 @ 0x2e57340] i16 v,h,dc,p: 79% 18%  3%  0%
+[libx264 @ 0x2e57340] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 26% 29% 16%  3%  3%  3%  8%  3%  9%
+[libx264 @ 0x2e57340] i8c dc,h,v,p: 87%  5%  7%  1%
+[libx264 @ 0x2e57340] ref P L0: 81.7% 15.5%  2.7%
+[libx264 @ 0x2e57340] kb/s:29.69
+
+Executing UPDATE mp4_queue SET story_id = ?, buyer_user_id = ?, is_processing = ?, is_complied = ?, date_complied = ?, is_error = ?, process_as_mp4 = ?, mp4_job_completed_date = ?, file_name = ? WHERE mp4_id = ? with DTO: com.lbt.dto.MP4Files: mp4Id=1, storyId=788582, buyerUserId=-1, title=null, isProcessing=0, isComplied=1, dateComplied=Sun Nov 28 21:30:53 PST 2021, isError=0, processAsMp4=0, mp4JobCompletedDate=Sun Nov 28 21:30:53 PST 2021
+1 rows affected (16 ms)
+xxxxxxxx Completed MP4 compilation for 788582 at Sun Nov 28 21:30:53 PST 2021
+21:30:53.639 [main] DEBUG o.a.commons.httpclient.HttpClient - Java version: 1.7.0_171
+21:30:53.643 [main] DEBUG o.a.commons.httpclient.HttpClient - Java vendor: Oracle Corporation
+21:30:53.643 [main] DEBUG o.a.commons.httpclient.HttpClient - Java class path: /root/mcsetup/mcutility/mcutility.jar
+21:30:53.643 [main] DEBUG o.a.commons.httpclient.HttpClient - Operating system name: Linux
+21:30:53.643 [main] DEBUG o.a.commons.httpclient.HttpClient - Operating system architecture: amd64
+21:30:53.643 [main] DEBUG o.a.commons.httpclient.HttpClient - Operating system version: 5.10.13-x86_64-linode141
+21:30:53.655 [main] DEBUG o.a.commons.httpclient.HttpClient - SUN 1.7: SUN (DSA key/parameter generation; DSA signing; SHA-1, MD5 digests; SecureRandom; X.509 certificates; JKS keystore; PKIX CertPathValidator; PKIX CertPathBuilder; LDAP, Collection CertStores, JavaPolicy Policy; JavaLoginConfig Configuration)
+21:30:53.655 [main] DEBUG o.a.commons.httpclient.HttpClient - SunRsaSign 1.7: Sun RSA signature provider
+21:30:53.655 [main] DEBUG o.a.commons.httpclient.HttpClient - SunJSSE 1.7: Sun JSSE provider(PKCS12, SunX509/PKIX key/trust factories, SSLv3/TLSv1/TLSv1.1/TLSv1.2)
+21:30:53.655 [main] DEBUG o.a.commons.httpclient.HttpClient - SunJCE 1.7: SunJCE Provider (implements RSA, DES, Triple DES, AES, Blowfish, ARCFOUR, RC2, PBE, Diffie-Hellman, HMAC)
+21:30:53.655 [main] DEBUG o.a.commons.httpclient.HttpClient - SunJGSS 1.7: Sun (Kerberos v5, SPNEGO)
+21:30:53.655 [main] DEBUG o.a.commons.httpclient.HttpClient - SunSASL 1.7: Sun SASL provider(implements client mechanisms for: DIGEST-MD5, GSSAPI, EXTERNAL, PLAIN, CRAM-MD5, NTLM; server mechanisms for: DIGEST-MD5, GSSAPI, CRAM-MD5, NTLM)
+21:30:53.658 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.useragent = Jakarta Commons-HttpClient/3.1
+21:30:53.660 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.protocol.version = HTTP/1.1
+21:30:53.661 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.connection-manager.class = class org.apache.commons.httpclient.SimpleHttpConnectionManager
+21:30:53.661 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.protocol.cookie-policy = default
+21:30:53.661 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.protocol.element-charset = US-ASCII
+21:30:53.661 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.protocol.content-charset = ISO-8859-1
+21:30:53.663 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.method.retry-handler = org.apache.commons.httpclient.DefaultHttpMethodRetryHandler@10b2839f
+21:30:53.663 [main] DEBUG o.a.c.h.params.DefaultHttpParams - Set parameter http.dateparser.patterns = [EEE, dd MMM yyyy HH:mm:ss zzz, EEEE, dd-MMM-yy HH:mm:ss zzz, EEE MMM d HH:mm:ss yyyy, EEE, dd-MMM-yyyy HH:mm:ss z, EEE, dd-MMM-yyyy HH-mm-ss z, EEE, dd MMM yy HH:mm:ss z, EEE dd-MMM-yyyy HH:mm:ss z, EEE dd MMM yyyy HH:mm:ss z, EEE dd-MMM-yyyy HH-mm-ss z, EEE dd-MMM-yy HH:mm:ss z, EEE dd MMM yy HH:mm:ss z, EEE,dd-MMM-yy HH:mm:ss z, EEE,dd-MMM-yyyy HH:mm:ss z, EEE, dd-MM-yyyy HH:mm:ss z]
+21:30:53.700 [main] DEBUG o.a.c.httpclient.HttpConnection - Open connection to littlebirdtales.com:80
+21:30:53.702 [main] DEBUG httpclient.wire.header - >> "POST /tales/mp4Completed/mp4file_id/1 HTTP/1.1[\r][\n]"
+21:30:53.702 [main] DEBUG o.a.c.httpclient.HttpMethodBase - Adding Host request header
+21:30:53.712 [main] DEBUG httpclient.wire.header - >> "User-Agent: Jakarta Commons-HttpClient/3.1[\r][\n]"
+21:30:53.712 [main] DEBUG httpclient.wire.header - >> "Host: littlebirdtales.com[\r][\n]"
+21:30:53.712 [main] DEBUG httpclient.wire.header - >> "Content-Length: 0[\r][\n]"
+21:30:53.713 [main] DEBUG httpclient.wire.header - >> "[\r][\n]"
+21:30:53.713 [main] DEBUG o.a.c.h.m.EntityEnclosingMethod - Request body has not been specified
+21:30:54.251 [main] DEBUG httpclient.wire.header - << "HTTP/1.1 200 OK[\r][\n]"
+21:30:54.252 [main] DEBUG httpclient.wire.header - << "HTTP/1.1 200 OK[\r][\n]"
+21:30:54.253 [main] DEBUG httpclient.wire.header - << "Date: Mon, 29 Nov 2021 05:30:53 GMT[\r][\n]"
+21:30:54.253 [main] DEBUG httpclient.wire.header - << "Server: Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips[\r][\n]"
+21:30:54.253 [main] DEBUG httpclient.wire.header - << "Set-Cookie: PHPSESSID=h5qcj9cpg0873bqqele1aiu5a0; expires=Tue, 29-Nov-2022 05:30:53 GMT; Max-Age=31536000; path=/; domain=littlebirdtales.com[\r][\n]"
+21:30:54.253 [main] DEBUG httpclient.wire.header - << "Expires: Thu, 19 Nov 1981 08:52:00 GMT[\r][\n]"
+21:30:54.253 [main] DEBUG httpclient.wire.header - << "Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0[\r][\n]"
+21:30:54.254 [main] DEBUG httpclient.wire.header - << "Pragma: no-cache[\r][\n]"
+21:30:54.254 [main] DEBUG httpclient.wire.header - << "Vary: User-Agent[\r][\n]"
+21:30:54.254 [main] DEBUG httpclient.wire.header - << "Content-Length: 1[\r][\n]"
+21:30:54.254 [main] DEBUG httpclient.wire.header - << "Connection: close[\r][\n]"
+21:30:54.254 [main] DEBUG httpclient.wire.header - << "Content-Type: text/html; charset=UTF-8[\r][\n]"
+21:30:54.254 [main] DEBUG httpclient.wire.header - << "[\r][\n]"
+21:30:54.258 [main] DEBUG o.a.c.httpclient.HttpMethodBase - Cookie accepted: "$Version=0; PHPSESSID=h5qcj9cpg0873bqqele1aiu5a0; $Path=/; $Domain=littlebirdtales.com"
+Sending message to LBT site. Success: true
+[root@lbt_prod_64 lbt]# 

@@ -85,7 +85,7 @@ module.exports = class ImageModel {
       // strip off the data: url prefix to get just the base64-encoded bytes
       const data = dataUri.replace(/^data:image\/\w+;base64,/, "");
       const buf = Buffer.from(data, 'base64');
-      fs.writeFileSync(this.combineImage, buf);    
+      await fs.writeFileSync(this.combineImage, buf);    
       logger.info('[CreateImage] combined file: ' + this.combineImage)
     }
     catch(err) {
