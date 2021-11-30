@@ -45,6 +45,7 @@ class Program {
     const story = await this.dm.getNextStory()
     if (story) {
       await this.compileVideo(story)
+      process.exit()
     }
     else {
       logger.info('[Program.process] No story found to process.');
