@@ -76,7 +76,9 @@ class Program {
           HTMLUtil.removeHTML(story.data.title),
           this.tempStoryDirectoryPrefix + "text" + story.data.story_id + ".png",
           this.storyImagesDirectoryPrefix + story.data.image_path,
-          image_file_name);
+          this.tempImagesDirectoryPrefix,
+          this.remoteImageFilePath + story.data.image_path,
+          image_file_name, this.pageCounter + ".png");
 
         await this.createAudioFile(
           this.storyAudioDirectoryPrefix + story.data.audio_path,
@@ -102,7 +104,9 @@ class Program {
               HTMLUtil.removeHTML(page.body),
               this.tempStoryDirectoryPrefix + "text" + page.page_num + ".png",
               this.storyImagesDirectoryPrefix + page.image_path,
-              image_file_name);
+              this.tempImagesDirectoryPrefix,
+              this.remoteImageFilePath + page.image_path,
+              image_file_name, this.pageCounter + ".png");
 
             await this.createAudioFile(
               this.storyAudioDirectoryPrefix + page.audio_path,
@@ -270,7 +274,42 @@ class Program {
     }
   }
 
-  async createImage(text, textImage, taleImage, combineImage) {
+  async createImage(text, textImage, taleImage, destPath, remoteFile, combineImage, destFileName) {
+    logger.info(`[createImage] text: ${text}`);
+    logger.info(`[createImage] textImage: ${textImage}`);
+    logger.info(`[createImage] taleImage: ${taleImage}`);
+    logger.info(`[createImage] destPath: ${destPath}`);
+    logger.info(`[createImage] remoteFile: ${remoteFile}`);
+    logger.info(`[createImage] destFileName: ${destFileName}`);
+
+    if (remoteFile.endsWith('null')) {
+      taleImage = this.defaultImagePath;    }
+    else {
+      logger.info(`[createImage] Downloading image file: ${remoteFile} to ${destPath}`)
+      try {
+        const payload = {"bucketName": "littlebirdtales", 
+        "sourceFile": remoteFile, 
+        "sourceFileMed": '',
+        "sourceFileSml": '',
+
+        "destinationFileDirectory": destPath, 
+        "destinationFileName": destFileName, 
+        "destinationFileNameMed": '', 
+        "destinationFileNameSml": '', 
+        };
+
+        const url = `${config.storj_service_url}downloadSelectedImage`;
+        logger.info(`[createImage] download file url: ${url}`);
+        const response = await axios.post(url, payload)
+        logger.info('[createImage] response' + JSON.stringify(response.data));
+      } catch (error) {
+        logger.info('[createImage] Downloading error ' + error);
+      }
+    }
+
+    taleImage = destPath + destFileName
+    logger.info(`[createImage] taleImage: ${taleImage}`);
+
     this.mm.text = text;
     this.mm.textImage = textImage;
     this.mm.taleImage = taleImage;
