@@ -444,18 +444,18 @@ class Program {
 		{
       const temp = this.combineMPGFiles[i];
 			logger.info("[concatenateFiles] combining file " + temp);
-			buffer += temp + " ";
+			buffer += `file ${temp}\r\n`;
 		}
 
     // write these file names to the output file
     logger.info("[concatenateFiles] data: " + buffer);
-    const command = `/usr/bin/cat ${buffer} > ${output_filename}`;
-    logger.info("[concatenateFiles] command: " + command);
+    // const command = `/usr/bin/cat ${buffer} > ${output_filename}`;
+    // logger.info("[concatenateFiles] command: " + command);
 
   	// String command = "/bin/cat " + buffer.toString() + " > " + output_filename;
 		// String[] cmd = {"/bin/bash","-c",command};
-    execSync(command);
-    // fs.writeFileSync(output_filename, buffer);
+    // execSync(command);
+    fs.writeFileSync(output_filename, buffer);
     
     logger.info("[concatenateFiles] Done");
     return output_filename;
