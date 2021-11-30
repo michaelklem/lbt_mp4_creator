@@ -27,6 +27,17 @@ class Story extends QueryRunner {
       return null;
     }  
   }
+
+  async setFilename(title) {
+    try {      
+      const query = `update stories set file_name = ? where story_id = ?`;
+			await this.query(query, [title, this.story_id]);
+    } 
+    catch(err) {
+      logger.error(`[getNextStory] Error: ${err}`);
+      return null;
+    }  
+  }
 }
 
 module.exports = Story;

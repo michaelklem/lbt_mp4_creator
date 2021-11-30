@@ -61,9 +61,7 @@ class Program {
       this.pageCounter = 0;
 
       try {
-        logger.info('xxxxx')
         await this.dm.startProcessing( story.data.story_id )
-        logger.info('xxxxx2')
         this.story_id = story.data.story_id
         this.user_id = story.data.user_id
         this.setStoryDirectories()
@@ -79,24 +77,13 @@ class Program {
           this.tempStoryDirectoryPrefix + "text" + story.data.story_id + ".png",
           this.storyImagesDirectoryPrefix + story.data.image_path,
           image_file_name);
-        // await this.createImage(
-        //   HTMLUtil.removeHTML(story.data.title),
-        //   this.tempStoryDirectoryPrefix + "text" + story.data.story_id + ".png",
-        //   this.storyImagesDirectoryPrefix + story.data.image_path,
-        //   this.tempStoryDirectoryPrefix + story.data.story_id + ".png");
 
         await this.createAudioFile(
           this.storyAudioDirectoryPrefix + story.data.audio_path,
           this.tempAudioDirectoryPrefix,
           this.remoteAudioFilePath + story.data.audio_path,
           audio_file_name);
-        // await this.createAudioFile(
-        //   this.storyAudioDirectoryPrefix + story.data.audio_path,
-        //   this.tempAudioDirectoryPrefix,
-        //   this.remoteAudioFilePath + story.data.audio_path,
-        //   `story${story.data.story_id}.flv`);
 
-        // await this.createCopies(this.tempStoryDirectoryPrefix + story.data.story_id + ".png", this.duration);
         await this.combineImageAndAudio(image_file_name, this.tempAudioDirectoryPrefix + audio_file_name);
 
         logger.info('Processing pages...')
@@ -123,7 +110,7 @@ class Program {
               this.remoteAudioFilePath + page.audio_path,
               audio_file_name);
 
-            // await this.combineImageAndAudio(image_file_name, audio_file_name)
+            await this.combineImageAndAudio(image_file_name, this.tempAudioDirectoryPrefix+audio_file_name)
 
           } // for       
         } // if true
@@ -135,8 +122,7 @@ class Program {
         // }
 
         // concatenate all image and audio mpg files into a single mpg file
-        this.concatenateFiles() // for testing
-        // buildMP4( this.concatenateFiles(), nextStory );
+        await this.buildMP4( this.concatenateFiles(), story );
 
         // this.mergeAudio(story.data.story_id)
       }
@@ -224,14 +210,14 @@ class Program {
 
     try {
       if (sourcePath === null || sourcePath === "" || sourcePath.endsWith("null") || !sourcePath.endsWith(".flv")) {
-        logger.info('should be a empty audio file')
+        logger.info('[createAudioFile] using empty audio file: ' + this.emptyAudio)
         sourcePath = this.emptyAudio;
         await fs.copyFileSync(sourcePath, destPath+destFileName);
       }
       else {
         logger.info(`[createAudioFile] Downloading audio file: ${remoteFile} to ${destPath}`)
         try {
-          const payload = {"bucketName": "lbtassets232304", 
+          const payload = {"bucketName": "littlebirdtales", 
           "sourceFile": remoteFile, 
           "sourceFileMed": '',
           "sourceFileSml": '',
@@ -301,7 +287,7 @@ class Program {
 
   // performs this ffmpeg command:
   // -loop 1 -shortest -y -i %image_file% -i %audio_file% -b:v 1200K -ac 2 %output_file%
-  async combineImageAndAudio(image_file, audio_file) { //666
+  async combineImageAndAudio(image_file, audio_file) {
     try {
       logger.info("[combineImageAndAudio] image "+ image_file);
       logger.info("[combineImageAndAudio] audio "+ audio_file);
@@ -332,15 +318,18 @@ class Program {
       ];
 
       try {
-        await spawn(`/usr/local/bin/ffmpeg`, args)
+        // await spawn(`/usr/local/bin/ffmpeg`, args) //666
+        execSync(`/usr/local/bin/ffmpeg -loop 1 -y -i ${image_file} -i ${audio_file} -b:v 1200K -ac 2 -shortest ${output_file}`, { stdio: 'ignore' });
         this.combineMPGFiles.push(output_file);
       }
       catch(err) {
         console.log('[combineImageAndAudio] Spawn error: ' + err)
+        throw err;
       }
     }
     catch(err) {
       logger.info('[combineImageAndAudio] Error: ' + err.stack)
+      throw err;
     }
   }
   
@@ -460,10 +449,44 @@ class Program {
 
     // write these file names to the output file
     logger.info("[concatenateFiles] data: " + buffer);
-    fs.writeFileSync(output_filename, buffer);
+    const command = `/usr/bin/cat ${buffer} > ${output_filename}`;
+    logger.info("[concatenateFiles] command: " + command);
+
+  	// String command = "/bin/cat " + buffer.toString() + " > " + output_filename;
+		// String[] cmd = {"/bin/bash","-c",command};
+    execSync(command);
+    // fs.writeFileSync(output_filename, buffer);
+    
     logger.info("[concatenateFiles] Done");
+    return output_filename;
   }
 
+  async buildMP4(combined_mpg_files, story) {
+    let filename = this.cleanFileName(story.data.title);
+    logger.info(`[buildMP4] combined_mpg_files: ${combined_mpg_files}`);
+    logger.info(`[buildMP4] mp4 title: ${filename}`);
+    await story.setFilename(filename);
+
+    let output_file = this.storyVideoDirectoryPrefix + filename +".mp4 ";
+    try {
+      let command = config.ffmpeg_build_commandline;
+      command = command.replace("%combined_mpg_files%", combined_mpg_files);
+      command = command.replace("%output_file%", output_file);
+
+			logger.info ("FFMPEG ================ " + command);
+			logger.info ("MP4 file can be found here ================ " + output_file);
+
+      execSync(`/usr/local/bin/ffmpeg ${command}`, { stdio: 'ignore' });    
+    }
+    catch(err) {
+      logger.info('[buildMP4] Error: ' + err.stack);
+    }
+  }
+
+  cleanFileName(curStoryTitle)
+	{
+		return "littlebirdtales_movie-" + new Date().getTime();
+  }
 }
 
 module.exports = Program;
