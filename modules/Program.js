@@ -101,39 +101,29 @@ class Program {
 
         logger.info('Processing pages...')
         let _storyPages = [];
-        if (false) {
+        if (true) {
           const storyPages = await this.dm.getPages(story.data.story_id);
           for (let page of storyPages) {
             console.log('xxxxx page: ' + JSON.stringify(page))
             this.duration = 0;
+            ++this.pageCounter;
 
             image_file_name = this.tempImagesDirectoryPrefix + this.pageCounter + ".png";
-            audio_file_name = this.tempAudioDirectoryPrefix + this.pageCounter + ".flv";
+            audio_file_name = this.pageCounter + ".flv";
 
             await this.createImage(
               HTMLUtil.removeHTML(page.body),
               this.tempStoryDirectoryPrefix + "text" + page.page_num + ".png",
               this.storyImagesDirectoryPrefix + page.image_path,
               image_file_name);
-            // await this.createImage(
-            //   HTMLUtil.removeHTML(page.body),
-            //   this.tempStoryDirectoryPrefix + "text" + page.page_num + ".png",
-            //   this.storyImagesDirectoryPrefix + page.image_path,
-            //   this.tempStoryDirectoryPrefix + "combine" + page.story_page_id + ".png");
 
             await this.createAudioFile(
               this.storyAudioDirectoryPrefix + page.audio_path,
               this.tempAudioDirectoryPrefix,
               this.remoteAudioFilePath + page.audio_path,
               audio_file_name);
-            // await this.createAudioFile(
-            //   this.storyAudioDirectoryPrefix + page.audio_path,
-            //   this.tempAudioDirectoryPrefix,
-            //   this.remoteAudioFilePath + page.audio_path,
-            //   `page${page.story_page_id}.flv`);
 
-            // await this.createCopies(this.tempStoryDirectoryPrefix + "combine" + page.story_page_id + ".png", this.duration);
-            await this.combineImageAndAudio(image_file_name, audio_file_name)
+            // await this.combineImageAndAudio(image_file_name, audio_file_name)
 
           } // for       
         } // if true
@@ -227,14 +217,19 @@ class Program {
   } // create directories
 
   async createAudioFile(sourcePath, destPath, remoteFile, destFileName) {
-    try {
-      if (sourcePath != null && sourcePath != "") {
-        logger.info('[createAudioFile] sourcePath: ' + sourcePath);
-        logger.info('[createAudioFile] destPath: ' + destPath);
-        logger.info('[createAudioFile] remoteFile: ' + remoteFile);
-        logger.info('[createAudioFile] destFileName: ' + destFileName);
+    logger.info('[createAudioFile] sourcePath: ' + sourcePath);
+    logger.info('[createAudioFile] destPath: ' + destPath);
+    logger.info('[createAudioFile] remoteFile: ' + remoteFile);
+    logger.info('[createAudioFile] destFileName: ' + destFileName);
 
-        console.log(`[createAudioFile] Downloading audio file: ${remoteFile} to ${destPath}`)
+    try {
+      if (sourcePath === null || sourcePath === "" || sourcePath.endsWith("null") || !sourcePath.endsWith(".flv")) {
+        logger.info('should be a empty audio file')
+        sourcePath = this.emptyAudio;
+        await fs.copyFileSync(sourcePath, destPath+destFileName);
+      }
+      else {
+        logger.info(`[createAudioFile] Downloading audio file: ${remoteFile} to ${destPath}`)
         try {
           const payload = {"bucketName": "lbtassets232304", 
           "sourceFile": remoteFile, 
@@ -248,28 +243,15 @@ class Program {
           };
 
           const url = `${config.storj_service_url}downloadSelectedImage`;
-          console.log(`[createAudioFile] download file url: ${url}`);
+          logger.info(`[createAudioFile] download file url: ${url}`);
           const response = await axios.post(url, payload)
-          console.log('[createAudioFile] response' + JSON.stringify(response.data));
+          logger.info('[createAudioFile] response' + JSON.stringify(response.data));
         } catch (error) {
-          console.log('[createAudioFile] Downloading error ' + error);
+          logger.info('[createAudioFile] Downloading error ' + error);
         }
 
         sourcePath = destPath + destFileName
-        this.duration = await this.getDuration(sourcePath);
-        if (this.duration === 0) {
-          sourcePath = this.emptyAudio;
-        }
       }
-      else
-      {
-        sourcePath = this.emptyAudio;
-        // Copy the source to the temp directory to be worked on
-        // logger.info(`[createAudioFile] copying ${sourcePath} to ${destPath}`);
-        await fs.copyFileSync(sourcePath, destPath);
-      }
-
-      this.audioFiles.push(sourcePath)
     }
     catch(err){
       logger.info('[createAudioFile] Error: ' + err.stack)
@@ -311,10 +293,10 @@ class Program {
     await this.mm.TextOverlay();
     this.mm.CreateImage();
 
-    logger.info("createImage: text: " + text);
-    logger.info("createImage: textImage: " + textImage);
-    logger.info("createImage: taleImage: " + taleImage);
-    logger.info("createImage: combineImage: " + combineImage);
+    logger.info("[createImage] text: " + text);
+    logger.info("[createImage] textImage: " + textImage);
+    logger.info("[createImage] taleImage: " + taleImage);
+    logger.info("[createImage] combineImage: " + combineImage);
   }
 
   // performs this ffmpeg command:
