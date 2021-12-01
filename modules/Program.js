@@ -49,6 +49,7 @@ class Program {
     }
     else {
       logger.info('[Program.process] No story found to process.');
+      process.exit();
     }
   }
 
