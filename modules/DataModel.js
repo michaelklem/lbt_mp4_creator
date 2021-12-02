@@ -68,4 +68,52 @@ module.exports = class DataModel extends QueryRunner {
       return null;
     }
   }
+
+  async videoCompiled(story){
+    try {
+      const query = `update mp4_queue 
+      set is_processing = 0,
+      is_complied = 1,
+      date_complied = now(),
+      process_as_mp4 = 0,
+      mp4_job_completed_date = now()
+      where story_id = ?`;
+
+			await this.query(query, [story.data.story_id]);
+
+      const story_query = `update stories 
+      set file_name = ?
+      where story_id = ?`;
+			await this.query(query, [story.data.file_name, story.data.story_id]);
+    }
+    catch(err) {
+      logger.error(`[videoCompiled] Error: ${err}`);
+    }
+    /*
+		MP4FilesDao _dao = MP4FilesDaoFactory.create();
+		story.setIsProcessing((short)0);
+		story.setIsComplied((short)1);
+		story.setDateComplied(new Date());
+		story.setProcessAsMp4((short)0);
+		story.setDateComplied(new Date());
+		story.setMp4JobCompletedDate(new Date());
+		
+		Stories nextStory = story.getStory();
+		story.setFilename(nextStory.getFilename());
+		try {
+			_dao.update(story.createPk(), story);
+		} catch (MP4FilesDaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// if buyer_user_id == story->user_id
+		// then set the process_as_mp4 flag for the story
+		// this will prevent the user from re-issuing a story to be processed
+		if (story.getBuyerUserId() == story.getStory().getUserId())
+		{
+			updateStoryRecord(story.getStory());
+		}
+    */
+  }
 }

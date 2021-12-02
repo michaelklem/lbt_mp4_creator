@@ -130,7 +130,7 @@ class Program {
         // concatenate all image and audio mpg files into a single mpg file
         await this.buildMP4( this.concatenateFiles(), story );
 
-        // this.mergeAudio(story.data.story_id)
+				await this.dm.videoCompiled(story);
       }
       catch(err) {
         logger.info(`[Program.compileVideo] Error: ${err.stack}`)
