@@ -12,14 +12,16 @@ module.exports = class DataModel extends QueryRunner {
     let nextStory = null;
 
     try {
-      const query = `select story_id from mp4_queue where is_complied = 0 AND is_processing = 0 AND is_error=0 LIMIT 1`;
+      const query = `select story_id, mp4_id from mp4_queue where is_complied = 0 AND is_processing = 0 AND is_error=0 LIMIT 1`;
 			let results = await this.query(query);
       if (results && results[0]) {
         const nextStoryId =  results[0].story_id;
         nextStory = await this.getStory( nextStoryId )
+        return {"story":nextStory, "mp4_id":results[0].mp4_id};
       }
-
-      return nextStory;
+      else {
+        return null;
+      }
     } 
     catch(err) {
       logger.error(`[getNextStory] Error: ${err}`);
@@ -84,7 +86,19 @@ module.exports = class DataModel extends QueryRunner {
       const story_query = `update stories 
       set file_name = ?
       where story_id = ?`;
-			await this.query(query, [story.data.file_name, story.data.story_id]);
+			await this.query(story_query, [story.data.file_name, story.data.story_id]);
+
+		// if buyer_user_id == story->user_id
+		// then set the process_as_mp4 flag for the story
+		// this will prevent the user from re-issuing a story to be processed
+    // this does not seem to make sense. Keeping it for legacy purposes.
+		if (story.data.buyer_user_id === story.data.user_id)
+		{
+      const story_query2 = `update stories 
+      set process_as_mp4 = 0
+      where story_id = ?`;
+			await this.query(story_query2, [story.data.story_id]);
+		}
     }
     catch(err) {
       logger.error(`[videoCompiled] Error: ${err}`);

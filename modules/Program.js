@@ -42,9 +42,12 @@ class Program {
   }
 
   async process() {
-    const story = await this.dm.getNextStory()
-    if (story) {
-      await this.compileVideo(story)
+    const json = await this.dm.getNextStory()
+    if (json) {
+      const story = json.story;
+      const mp4_id = json.mp4_id;
+
+      await this.compileVideo(story, mp4_id)
       process.exit()
     }
     else {
@@ -53,7 +56,7 @@ class Program {
     }
   }
 
-  async compileVideo(story) {
+  async compileVideo(story, mp4_id) {
     logger.info(`[Program.compileVideo] processing story id: ${story.data.story_id}`)
     if (! this.isProcessing) {
       this.isProcessing = true;
@@ -135,11 +138,34 @@ class Program {
       catch(err) {
         logger.info(`[Program.compileVideo] Error: ${err.stack}`)
       }
+
+      // tell the web site that we are done
+			await this.sendMessageToWebSite(story, mp4_id);
+
     } // this.isProcessing
     else {
       logger.info(`Story: ${story.data.story_id} is already being processed.`)
     }
   } // compileVideo
+
+  async sendMessageToWebSite(story, mp4_id) {
+    try {
+      const url = `https://${config.hostname}/tales/mp4Completed/mp4file_id/${mp4_id}`;
+      logger.info('[sendMessageToWebSite] url: ' + url);
+      await axios.post(url)
+      logger.info('[sendMessageToWebSite] success');    
+        // .then((response) =>{
+        //   logger.info('[sendMessageToWebSite] sucess: ');    
+        // })
+        // .catch((error) =>{
+        //   logger.info('[sendMessageToWebSite] error: ' + err.stack);
+        // })
+    }
+    catch(err )
+    {
+      logger.info('[sendMessageToWebSite] Error: ' + err.stack);
+    }
+  }
 
   setStoryDirectories() {
     try {
