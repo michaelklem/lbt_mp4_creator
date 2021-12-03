@@ -71,22 +71,23 @@ module.exports = class DataModel extends QueryRunner {
     }
   }
 
-  async videoCompiled(story){
+  async videoCompiled(story, output_filename){
     try {
       const query = `update mp4_queue 
       set is_processing = 0,
       is_complied = 1,
       date_complied = now(),
       process_as_mp4 = 0,
-      mp4_job_completed_date = now()
+      mp4_job_completed_date = now(),
+      file_name = ?
       where story_id = ?`;
 
-			await this.query(query, [story.data.story_id]);
+			await this.query(query, [output_filename, story.data.story_id]);
 
       const story_query = `update stories 
       set file_name = ?
       where story_id = ?`;
-			await this.query(story_query, [story.data.file_name, story.data.story_id]);
+			await this.query(story_query, [output_filename, story.data.story_id]);
 
 		// if buyer_user_id == story->user_id
 		// then set the process_as_mp4 flag for the story

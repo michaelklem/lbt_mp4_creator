@@ -131,9 +131,9 @@ class Program {
         // }
 
         // concatenate all image and audio mpg files into a single mpg file
-        await this.buildMP4( this.concatenateFiles(), story );
+        const output_filename = await this.buildMP4( this.concatenateFiles(), story );
 
-				await this.dm.videoCompiled(story);
+				await this.dm.videoCompiled(story, output_filename);
       }
       catch(err) {
         logger.info(`[Program.compileVideo] Error: ${err.stack}`)
@@ -174,6 +174,7 @@ class Program {
       this.storyImagesDirectoryPrefix = this.storyDirectoryPrefix + "images/";
       this.storyAudioDirectoryPrefix = this.storyDirectoryPrefix + "audio/";
       this.storyVideoDirectoryPrefix = this.storyDirectoryPrefix + "video/";
+      this.storyVideoDirectoryPrefix = this.directoryPrefix + "video/";
       this.remoteAudioFilePath = this.remoteUsersdirectory + "audio/";
       this.remoteImageFilePath = this.remoteUsersdirectory + "images/";
 
@@ -373,19 +374,7 @@ class Program {
         logger.info("[combineImageAndAudio] audio_file exists "+ audio_file);
       }
 
-      let args = [
-        '-loop','1',
-        '-y',
-        '-i',image_file,
-        '-i',audio_file,
-        '-b:v','1200K',
-        '-ac','2',
-        '-shortest',
-        output_file
-      ];
-
       try {
-        // await spawn(`/usr/local/bin/ffmpeg`, args) //666
         execSync(`/usr/local/bin/ffmpeg -loop 1 -y -i ${image_file} -i ${audio_file} -b:v 1200K -ac 2 -shortest ${output_file}`, { stdio: 'ignore' });
         this.combineMPGFiles.push(output_file);
       }
@@ -459,11 +448,7 @@ class Program {
             `-y ${outfilename}`
         ];
         try {
-          // /usr/local/bin/ffmpeg -i /opt/mp4_utility/temp/4/789439/audio/0.flv -acodec libmp3lame -y /opt/mp4_utility/temp/4/789439/audio/0.mp3
-          // /usr/local/bin/ffmpeg -i /opt/mp4_utility/temp/4/789439/audio/0.flv -acodec libmp3lame -y /opt/mp4_utility/temp/4/789439/audio/0.mp3
           logger.info(`[mergeAudio] ffmpeg 1: ${args}`)
-          // await spawn('/usr/local/bin/ffmpeg', args);
-          // await spawn('/usr/local/bin/ffmpeg', args);
           execSync(`/usr/local/bin/ffmpeg -i ${infilename}.flv -acodec libmp3lame -y ${outfilename}`, { stdio: 'ignore' });
           mergecmdPart += outfilename
         }
@@ -472,28 +457,12 @@ class Program {
           throw err;
         }
 
-
-        // command = ffmpegPath + " -f image2 -r 10 -i " +  tempImagesDirectoryPrefix+"%05d.png"+ " -i " + OutAudioFilePart +  " -vcodec libx264 -vpre slow -acodec libfaac -y " + tempVOutFilePart;
-        args = [
-            '-f', 'image2',
-            '-r', '10',
-            '-i',`${this.tempImagesDirectoryPrefix}%05d.png`, 
-            '-i', OutAudioFilePart,
-            '-vcodec', 'libx264',
-            '-vpre','slow',
-            '-acodec', 'libfaac',
-            '-y', tempVOutFilePart
-        ];
-
         try {
-          logger.info(`[mergeAudio] ffmpeg 2: ${args}`)
-          // await spawn('/usr/local/bin/ffmpeg', args);
           execSync(`/usr/local/bin/ffmpeg -f image2 -r 10 -i ${this.tempImagesDirectoryPrefix}%05d.png -i ${OutAudioFilePart} -vcodec libx264 -vpre slow -acodec libfaac -y ${tempVOutFilePart}`, { stdio: 'ignore' });
         }
         catch(err) {
           logger.info('[mergeAudio] 2 Error: ' + err);
         }
-        // deleteDirectory tempStoryDirectoryPrefix
       } // for
     }
     catch(err) {
@@ -516,12 +485,6 @@ class Program {
 
     // write these file names to the output file
     logger.info("[concatenateFiles] data: " + buffer);
-    // const command = `/usr/bin/cat ${buffer} > ${output_filename}`;
-    // logger.info("[concatenateFiles] command: " + command);
-
-  	// String command = "/bin/cat " + buffer.toString() + " > " + output_filename;
-		// String[] cmd = {"/bin/bash","-c",command};
-    // execSync(command);
     fs.writeFileSync(output_filename, buffer);
     
     logger.info("[concatenateFiles] Done");
@@ -543,7 +506,8 @@ class Program {
 			logger.info ("FFMPEG ================ " + command);
 			logger.info ("MP4 file can be found here ================ " + output_file);
 
-      execSync(`/usr/local/bin/ffmpeg ${command}`, { stdio: 'ignore' });    
+      execSync(`/usr/local/bin/ffmpeg ${command}`, { stdio: 'ignore' });
+      return filename;
     }
     catch(err) {
       logger.info('[buildMP4] Error: ' + err.stack);
