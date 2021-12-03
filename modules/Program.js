@@ -414,62 +414,6 @@ class Program {
     }
   } //
 
-  async mergeAudio(storyId) {
-    let mergecmdPart= '';
-    let codecPart=" -oac copy -ovc copy ";
-    let tempOutFilePart=  this.tempAudioDirectoryPrefix + "mergeAudio.mp3 " ;
-    let OutAudioFilePart=  this.tempAudioDirectoryPrefix + "mergeAudio_MP3WRAP.mp3 " ;
-    let OutAudioFilePartRaw=  this.tempAudioDirectoryPrefix + "mergeAudio_MP3WRAP.mp3 " ;
-    let tempVOutFilePart=   this.tempAudioDirectoryPrefix + storyId +".mp4 " ;
-    let OutFilePart=   this.storyVideoDirectoryPrefix + storyId +".mp4 " ;
-    let command = "";
-
-    try {
-      for (let audioFile of this.audioFiles) {
-        logger.info(`Processing audio file: ${audioFile}`);
-        const infilename = audioFile.substring(0,audioFile.length-4);
-        const outfilename = infilename +".mp3  ";
-        logger.info(`[mergeAudio] infilename: ${infilename}`)
-        logger.info(`[mergeAudio] outfilename: ${outfilename}`)
-
-        if (await fs.existsSync(audioFile)) {
-          logger.info("[mergeAudio] audioFile exists "+ audioFile);
-        }
-
-        let args = [
-            '-i', `${infilename}.flv`,
-            '-acodec', 'libmp3lame',
-            '-y',outfilename
-        ];
-
-        args = [
-            `-i ${infilename}.flv`,
-            '-acodec libmp3lame',
-            `-y ${outfilename}`
-        ];
-        try {
-          logger.info(`[mergeAudio] ffmpeg 1: ${args}`)
-          execSync(`/usr/local/bin/ffmpeg -i ${infilename}.flv -acodec libmp3lame -y ${outfilename}`, { stdio: 'ignore' });
-          mergecmdPart += outfilename
-        }
-        catch(err) {
-          logger.info('[mergeAudio] Error: ' + err.stack);
-          throw err;
-        }
-
-        try {
-          execSync(`/usr/local/bin/ffmpeg -f image2 -r 10 -i ${this.tempImagesDirectoryPrefix}%05d.png -i ${OutAudioFilePart} -vcodec libx264 -vpre slow -acodec libfaac -y ${tempVOutFilePart}`, { stdio: 'ignore' });
-        }
-        catch(err) {
-          logger.info('[mergeAudio] 2 Error: ' + err);
-        }
-      } // for
-    }
-    catch(err) {
-      logger.info(`[mergeAudio] Error: ${err.stack}`)
-    }
-  }
-
 	// iterate over all files in combineMPGFiles and cat them together
 	concatenateFiles() {
     const output_filename = this.tempVideoDirectoryPrefix + "combined.mpg";
@@ -497,16 +441,21 @@ class Program {
     logger.info(`[buildMP4] mp4 title: ${filename}`);
     await story.setFilename(filename);
 
+    let temp_output_file = this.storyVideoDirectoryPrefix + filename +"_temp.mp4 ";
     let output_file = this.storyVideoDirectoryPrefix + filename +".mp4 ";
     try {
       let command = config.ffmpeg_build_commandline;
       command = command.replace("%combined_mpg_files%", combined_mpg_files);
-      command = command.replace("%output_file%", output_file);
+      command = command.replace("%output_file%", temp_output_file);
 
 			logger.info ("FFMPEG ================ " + command);
 			logger.info ("MP4 file can be found here ================ " + output_file);
 
       execSync(`/usr/local/bin/ffmpeg ${command}`, { stdio: 'ignore' });
+
+      // https://stackoverflow.com/questions/28429526/ffmpeg-h-264-encoding-for-html5-and-ultimately-mpeg-dash
+      execSync(`/usr/local/bin/ffmpeg -i ${temp_output_file} -c:v libx264 -c:a aac -profile:v baseline -level:v 13 -g 250 -r 25 -keyint_min 250 -strict experimental -b:a 96k ${output_file}`);
+
       return filename;
     }
     catch(err) {
