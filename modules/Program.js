@@ -76,10 +76,7 @@ class Program {
         let image_file_name = this.tempImagesDirectoryPrefix + this.pageCounter + ".png";
         let audio_file_name = this.pageCounter + ".flv";
         // let audio_file_name = this.tempAudioDirectoryPrefix + this.pageCounter + ".flv";
-            console.log('aaaaaa this.storyImagesDirectoryPrefix: ' + this.storyImagesDirectoryPrefix)
-            console.log('aaaaaa story.data.image_path: ' + story.data.image_path)
         
-        //666
         await this.createImage(
           HTMLUtil.removeHTML(story.data.title),
           this.tempStoryDirectoryPrefix + "text" + story.data.story_id + ".png",
@@ -175,7 +172,7 @@ class Program {
 
   setStoryDirectories() {
     try {
-      // this.storyDirectoryPrefix = this.directoryPrefix + this.user_id + "/"; 666
+      // this.storyDirectoryPrefix = this.directoryPrefix + this.user_id + "/"; 
       this.storyDirectoryPrefix = this.directoryPrefix + this.user_bucket_path + "/";
       this.remoteUsersdirectory = config.remoteUsersdirectory + this.user_id + "/";
       this.storyImagesDirectoryPrefix = this.storyDirectoryPrefix + "images/";
@@ -312,7 +309,6 @@ class Program {
     }
   }
 
-  //666
   async createImage(text, textImage, taleImage, destPath, remoteFile, combineImage, destFileName) {
     logger.info(`[createImage] text: ${text}`);
     logger.info(`[createImage] textImage: ${textImage}`);
@@ -442,10 +438,7 @@ class Program {
       const temp = this.combineMPGFiles[i];
 			logger.info("[concatenateFiles] combining file " + temp);
 			buffer += `${temp} `;
-			// buffer += `file ${temp}\r\n`;
 		}
-
-    // 666
 
     // write these file names to the output file
     logger.info("[concatenateFiles] data: " + buffer);
