@@ -3,7 +3,7 @@ var logger = Logger.logger();
 const fs = require('fs');
 // const textToImage = require('text-to-image');
 const HTMLUtil = require('./HTMLUtil');
-const {UltimateTextToImage, registerFont} = require("ultimate-text-to-image");
+const {UltimateTextToImage} = require("ultimate-text-to-image");
 const config = require('../config.json');
 const mergeImages = require('merge-images');
 const { Canvas, Image } = require('canvas');
@@ -54,7 +54,7 @@ module.exports = class ImageModel {
         margin: 5,
         maxHeight: 120,
         height:120,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#f2f2f2',
         align:'center',
         valign:'middle'
       })
