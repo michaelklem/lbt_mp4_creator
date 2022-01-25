@@ -11,7 +11,7 @@
   "dependencies": {
     "await-spawn": "^4.0.2",
     "axios": "^0.24.0",
-    "canvas": "^2.8.0",
+    "canvas": "2.6.1",
     "dotenv": "^10.0.0",
     "merge-images": "^2.0.0",
     "mysql": "^2.18.1",

@@ -12,12 +12,23 @@ module.exports = class DataModel extends QueryRunner {
     let nextStory = null;
 
     try {
-      const query = `select story_id, mp4_id from mp4_queue where is_complied = 0 AND is_processing = 0 AND is_error=0 LIMIT 1`;
-			let results = await this.query(query);
+      // const query = `select story_id, mp4_id from mp4_queue where is_complied = 0 AND is_processing = 0 AND is_error=0 LIMIT 1`;
+      const query = `select story_id, mp4_id from mp4_queue where process_as_mp4 = 1 LIMIT 1`;
+			// const query = `select s.story_id, mq.mp4_id, u.user_id, u.bucket_path from 
+      //   stories s 
+      //   join
+      //   (
+      //   select story_id, mp4_id from mp4_queue where process_as_mp4 = 1 LIMIT 1
+      //   ) mq on mq.story_id = s.story_id
+      //   join users u on u.user_id 
+      //   where u.user_id = s.user_id`;
+
+      let results = await this.query(query);
       if (results && results[0]) {
         const nextStoryId =  results[0].story_id;
         nextStory = await this.getStory( nextStoryId )
         return {"story":nextStory, "mp4_id":results[0].mp4_id};
+        // return {"story":nextStory, "mp4_id":results[0].mp4_id, "user_id":results[0].user_id, "user_bucket_path":results[0].bucket_path};
       }
       else {
         return null;

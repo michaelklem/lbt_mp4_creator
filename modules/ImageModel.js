@@ -47,7 +47,7 @@ module.exports = class ImageModel {
         width: 600,
         maxWidth: 600,
         fontSize: 24,
-        fontFamily: 'Arial',
+        // fontFamily: 'Arial',
         lineHeight: 30,
         margin: 5,
         maxHeight: 120,

@@ -46,7 +46,6 @@ class Program {
     if (json) {
       const story = json.story;
       const mp4_id = json.mp4_id;
-
       await this.compileVideo(story, mp4_id)
       process.exit()
     }
@@ -69,6 +68,7 @@ class Program {
         await this.dm.startProcessing( story.data.story_id )
         this.story_id = story.data.story_id
         this.user_id = story.data.user_id
+        this.user_bucket_path = `${story.data.bucket_path}/${story.data.user_id}`
         this.setStoryDirectories()
         this.createDirectories()
 
@@ -77,28 +77,28 @@ class Program {
         let audio_file_name = this.pageCounter + ".flv";
         // let audio_file_name = this.tempAudioDirectoryPrefix + this.pageCounter + ".flv";
         
+        //666
         await this.createImage(
           HTMLUtil.removeHTML(story.data.title),
           this.tempStoryDirectoryPrefix + "text" + story.data.story_id + ".png",
           this.storyImagesDirectoryPrefix + story.data.image_path,
-          this.tempImagesDirectoryPrefix,
+          this.tempImagesDirectoryPrefix + story.data.image_path,
           this.remoteImageFilePath + story.data.image_path,
           image_file_name, this.pageCounter + ".png");
 
         await this.createAudioFile(
           this.storyAudioDirectoryPrefix + story.data.audio_path,
-          this.tempAudioDirectoryPrefix,
+          this.tempAudioDirectoryPrefix + story.data.audio_path,
           this.remoteAudioFilePath + story.data.audio_path,
           audio_file_name);
 
-        await this.combineImageAndAudio(image_file_name, this.tempAudioDirectoryPrefix + audio_file_name);
+        await this.combineImageAndAudio(this.tempImagesDirectoryPrefix + story.data.image_path, this.tempAudioDirectoryPrefix + story.data.audio_path);
 
         logger.info('Processing pages...')
         let _storyPages = [];
         if (true) {
           const storyPages = await this.dm.getPages(story.data.story_id);
           for (let page of storyPages) {
-            console.log('xxxxx page: ' + JSON.stringify(page))
             this.duration = 0;
             ++this.pageCounter;
 
@@ -109,17 +109,18 @@ class Program {
               HTMLUtil.removeHTML(page.body),
               this.tempStoryDirectoryPrefix + "text" + page.page_num + ".png",
               this.storyImagesDirectoryPrefix + page.image_path,
-              this.tempImagesDirectoryPrefix,
+              this.tempImagesDirectoryPrefix + page.image_path,
               this.remoteImageFilePath + page.image_path,
-              image_file_name, this.pageCounter + ".png");
+              image_file_name, this.pageCounter + ".png", page.image_path);
 
             await this.createAudioFile(
               this.storyAudioDirectoryPrefix + page.audio_path,
-              this.tempAudioDirectoryPrefix,
+              this.tempAudioDirectoryPrefix + page.audio_path,
               this.remoteAudioFilePath + page.audio_path,
               audio_file_name);
 
-            await this.combineImageAndAudio(image_file_name, this.tempAudioDirectoryPrefix+audio_file_name)
+            // await this.combineImageAndAudio(image_file_name, this.tempAudioDirectoryPrefix+audio_file_name)
+            await this.combineImageAndAudio(this.tempImagesDirectoryPrefix + page.image_path, this.tempAudioDirectoryPrefix + page.audio_path);
 
           } // for       
         } // if true
@@ -169,7 +170,8 @@ class Program {
 
   setStoryDirectories() {
     try {
-      this.storyDirectoryPrefix = this.directoryPrefix + this.user_id + "/";
+      // this.storyDirectoryPrefix = this.directoryPrefix + this.user_id + "/"; 666
+      this.storyDirectoryPrefix = this.directoryPrefix + this.user_bucket_path + "/";
       this.remoteUsersdirectory = config.remoteUsersdirectory + this.user_id + "/";
       this.storyImagesDirectoryPrefix = this.storyDirectoryPrefix + "images/";
       this.storyAudioDirectoryPrefix = this.storyDirectoryPrefix + "audio/";
@@ -250,21 +252,23 @@ class Program {
       else {
         logger.info(`[createAudioFile] Downloading audio file: ${remoteFile} to ${destPath}`)
         try {
-          const payload = {"bucketName": "littlebirdtales", 
-          "sourceFile": remoteFile, 
-          "sourceFileMed": '',
-          "sourceFileSml": '',
+          fs.copyFileSync(sourcePath, destPath);
 
-          "destinationFileDirectory": destPath, 
-          "destinationFileName": destFileName, 
-          "destinationFileNameMed": '', 
-          "destinationFileNameSml": '', 
-          };
+          // const payload = {"bucketName": "littlebirdtales", 
+          // "sourceFile": remoteFile, 
+          // "sourceFileMed": '',
+          // "sourceFileSml": '',
 
-          const url = `${config.storj_service_url}downloadSelectedImage`;
-          logger.info(`[createAudioFile] download file url: ${url}`);
-          const response = await axios.post(url, payload)
-          logger.info('[createAudioFile] response' + JSON.stringify(response.data));
+          // "destinationFileDirectory": destPath, 
+          // "destinationFileName": destFileName, 
+          // "destinationFileNameMed": '', 
+          // "destinationFileNameSml": '', 
+          // };
+
+          // const url = `${config.storj_service_url}downloadSelectedImage`;
+          // logger.info(`[createAudioFile] download file url: ${url}`);
+          // const response = await axios.post(url, payload)
+          // logger.info('[createAudioFile] response' + JSON.stringify(response.data));
         } catch (error) {
           logger.info('[createAudioFile] Downloading error ' + error);
         }
@@ -303,6 +307,7 @@ class Program {
     }
   }
 
+  //666
   async createImage(text, textImage, taleImage, destPath, remoteFile, combineImage, destFileName) {
     logger.info(`[createImage] text: ${text}`);
     logger.info(`[createImage] textImage: ${textImage}`);
@@ -316,21 +321,23 @@ class Program {
     else {
       logger.info(`[createImage] Downloading image file: ${remoteFile} to ${destPath}`)
       try {
-        const payload = {"bucketName": "littlebirdtales", 
-        "sourceFile": remoteFile, 
-        "sourceFileMed": '',
-        "sourceFileSml": '',
+        fs.copyFileSync(taleImage, destPath);
 
-        "destinationFileDirectory": destPath, 
-        "destinationFileName": destFileName, 
-        "destinationFileNameMed": '', 
-        "destinationFileNameSml": '', 
-        };
+        // const payload = {"bucketName": "littlebirdtales", 
+        // "sourceFile": remoteFile, 
+        // "sourceFileMed": '',
+        // "sourceFileSml": '',
 
-        const url = `${config.storj_service_url}downloadSelectedImage`;
-        logger.info(`[createImage] download file url: ${url}`);
-        const response = await axios.post(url, payload)
-        logger.info('[createImage] response' + JSON.stringify(response.data));
+        // "destinationFileDirectory": destPath, 
+        // "destinationFileName": destFileName, 
+        // "destinationFileNameMed": '', 
+        // "destinationFileNameSml": '', 
+        // };
+
+        // const url = `${config.storj_service_url}downloadSelectedImage`;
+        // logger.info(`[createImage] download file url: ${url}`);
+        // const response = await axios.post(url, payload)
+        // logger.info('[createImage] response' + JSON.stringify(response.data));
       } catch (error) {
         logger.info('[createImage] Downloading error ' + error);
       }
@@ -368,6 +375,11 @@ class Program {
 
       if (await fs.existsSync(image_file)) {
         logger.info("[combineImageAndAudio] image_file exists "+ image_file);
+      }
+
+      if (audio_file === null || audio_file === "" || audio_file.endsWith("null") || !audio_file.endsWith(".flv")) {
+        logger.info('[combineImageAndAudio] using empty audio file: ' + this.emptyAudio)
+        audio_file = this.emptyAudio;
       }
 
       if (await fs.existsSync(audio_file)) {
@@ -424,12 +436,16 @@ class Program {
 		{
       const temp = this.combineMPGFiles[i];
 			logger.info("[concatenateFiles] combining file " + temp);
-			buffer += `file ${temp}\r\n`;
+			buffer += `${temp} `;
+			// buffer += `file ${temp}\r\n`;
 		}
+
+    // 666
 
     // write these file names to the output file
     logger.info("[concatenateFiles] data: " + buffer);
-    fs.writeFileSync(output_filename, buffer);
+    execSync(`/usr/bin/cat ${buffer} >  ${output_filename}`, { stdio: 'ignore' });
+    // fs.writeFileSync(output_filename, buffer);
     
     logger.info("[concatenateFiles] Done");
     return output_filename;

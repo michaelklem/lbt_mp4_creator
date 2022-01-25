@@ -9,10 +9,10 @@ exports.removeHTML = function(htmlString) {
 
 
   // Remove Carriage return from java String
-  noHTMLString = noHTMLString.replaceAll("\r", "<br/>");
+  noHTMLString = noHTMLString.replace("\r", "<br/>");
 
   // Remove New line from java string and replace html break
-  noHTMLString = noHTMLString.replaceAll("\n", " ");
-  noHTMLString = noHTMLString.replaceAll("\"", "&quot;").trim();
+  noHTMLString = noHTMLString.replace("\n", " ");
+  noHTMLString = noHTMLString.replace("\"", "&quot;").trim();
   return noHTMLString;
 }
