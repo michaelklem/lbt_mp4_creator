@@ -76,6 +76,8 @@ class Program {
         let image_file_name = this.tempImagesDirectoryPrefix + this.pageCounter + ".png";
         let audio_file_name = this.pageCounter + ".flv";
         // let audio_file_name = this.tempAudioDirectoryPrefix + this.pageCounter + ".flv";
+            console.log('aaaaaa this.storyImagesDirectoryPrefix: ' + this.storyImagesDirectoryPrefix)
+            console.log('aaaaaa story.data.image_path: ' + story.data.image_path)
         
         //666
         await this.createImage(
@@ -92,7 +94,8 @@ class Program {
           this.remoteAudioFilePath + story.data.audio_path,
           audio_file_name);
 
-        await this.combineImageAndAudio(this.tempImagesDirectoryPrefix + story.data.image_path, this.tempAudioDirectoryPrefix + story.data.audio_path);
+        // await this.combineImageAndAudio(this.tempImagesDirectoryPrefix + story.data.image_path, this.tempAudioDirectoryPrefix + story.data.audio_path);
+        await this.combineImageAndAudio(this.mm.combineImage, this.tempAudioDirectoryPrefix + story.data.audio_path);
 
         logger.info('Processing pages...')
         let _storyPages = [];
@@ -120,7 +123,9 @@ class Program {
               audio_file_name);
 
             // await this.combineImageAndAudio(image_file_name, this.tempAudioDirectoryPrefix+audio_file_name)
-            await this.combineImageAndAudio(this.tempImagesDirectoryPrefix + page.image_path, this.tempAudioDirectoryPrefix + page.audio_path);
+            // await this.combineImageAndAudio(this.tempImagesDirectoryPrefix + page.image_path, this.tempAudioDirectoryPrefix + page.audio_path);
+            //888
+            await this.combineImageAndAudio(this.mm.combineImage, this.tempAudioDirectoryPrefix + page.audio_path);
 
           } // for       
         } // if true
@@ -321,7 +326,7 @@ class Program {
     else {
       logger.info(`[createImage] Downloading image file: ${remoteFile} to ${destPath}`)
       try {
-        fs.copyFileSync(taleImage, destPath);
+        await fs.copyFileSync(taleImage, destPath);
 
         // const payload = {"bucketName": "littlebirdtales", 
         // "sourceFile": remoteFile, 
@@ -343,7 +348,7 @@ class Program {
       }
     }
 
-    taleImage = destPath + destFileName
+    taleImage = destPath //+ destFileName
     logger.info(`[createImage] taleImage: ${taleImage}`);
 
     this.mm.text = text;
@@ -352,7 +357,7 @@ class Program {
     this.mm.textBG = this.textBG;
     this.mm.combineImage = combineImage;
     await this.mm.TextOverlay();
-    this.mm.CreateImage();
+    await this.mm.CreateImage();
 
     logger.info("[createImage] text: " + text);
     logger.info("[createImage] textImage: " + textImage);

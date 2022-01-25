@@ -3,7 +3,7 @@ var logger = Logger.logger();
 const fs = require('fs');
 // const textToImage = require('text-to-image');
 const HTMLUtil = require('./HTMLUtil');
-const {UltimateTextToImage} = require("ultimate-text-to-image");
+const {UltimateTextToImage, registerFont} = require("ultimate-text-to-image");
 const config = require('../config.json');
 const mergeImages = require('merge-images');
 const { Canvas, Image } = require('canvas');
@@ -43,11 +43,13 @@ module.exports = class ImageModel {
       // const buf = Buffer.from(data, 'base64');
       // fs.writeFileSync(this.textImage, buf);    
 
+      // registerFont("/usr/share/fonts/Arial_Rounded_MT_Bold.ttf");
+
       const textToImage = new UltimateTextToImage(this.text, {
         width: 600,
         maxWidth: 600,
         fontSize: 24,
-        // fontFamily: 'Arial',
+        // fontFamily: 'Arial, Sans',
         lineHeight: 30,
         margin: 5,
         maxHeight: 120,
@@ -72,6 +74,9 @@ module.exports = class ImageModel {
       if (! fs.existsSync(this.taleImage)) {
         this.taleImage = config.defaultimagepath
       }
+
+      logger.info('[CreateImage] this.taleImage: ' + this.taleImage)
+      logger.info('[CreateImage] this.textImage: ' + this.textImage)
 
       const dataUri = await mergeImages([
         { src: this.taleImage, x: 0, y: 0 },
