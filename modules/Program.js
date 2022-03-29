@@ -119,19 +119,33 @@ class Program {
               this.remoteAudioFilePath + page.audio_path,
               audio_file_name);
 
-            // await this.combineImageAndAudio(image_file_name, this.tempAudioDirectoryPrefix+audio_file_name)
-            // await this.combineImageAndAudio(this.tempImagesDirectoryPrefix + page.image_path, this.tempAudioDirectoryPrefix + page.audio_path);
-            //888
             await this.combineImageAndAudio(this.mm.combineImage, this.tempAudioDirectoryPrefix + page.audio_path);
 
           } // for       
         } // if true
         logger.info('Done processing pages')
 
-        // if (fs.existsSync(this.lastImagePath)) {
-        //   await this.createAudioFile(null, this.tempAudioDirectoryPrefix+ "last" + story.data.story_id + ".flv", null);
-        //   // this.createCopies(this.lastImagePath, 0);
-        // }
+        if (fs.existsSync(this.lastImagePath)) {
+            // await this.createImage(
+            //   HTMLUtil.removeHTML(page.body),
+            //   this.tempStoryDirectoryPrefix + "text" + page.page_num + ".png",
+            //   this.storyImagesDirectoryPrefix + page.image_path,
+            //   this.tempImagesDirectoryPrefix + page.image_path,
+            //   this.remoteImageFilePath + page.image_path,
+            //   image_file_name, this.pageCounter + ".png", page.image_path);
+            
+            // //666
+            // await this.createAudioFile(
+            //   null,
+            //   this.tempAudioDirectoryPrefix,
+            //   null,
+            //   "last.flv");
+
+            await this.combineImageAndAudio(this.lastImagePath, null);
+
+            // createImage(text, textImage, taleImage*, destPath*, remoteFile "last", combineImage, destFileName)
+
+        }
 
         // concatenate all image and audio mpg files into a single mpg file
         const output_filename = await this.buildMP4( this.concatenateFiles(), story );

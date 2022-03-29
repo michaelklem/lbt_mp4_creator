@@ -13,6 +13,6 @@ exports.removeHTML = function(htmlString) {
 
   // Remove New line from java string and replace html break
   noHTMLString = noHTMLString.replace("\n", " ");
-  noHTMLString = noHTMLString.replace("\"", "&quot;").trim();
+  //noHTMLString = noHTMLString.replace("\"", "&quot;").trim();
   return noHTMLString;
 }
