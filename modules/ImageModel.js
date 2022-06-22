@@ -21,36 +21,17 @@ module.exports = class ImageModel {
 
   async TextOverlay() {
     try {
-      // this.text = '   <foo><br/> this is a long piece of lame ass text to see how this module works. Actually it is an npm module. My mistake.<div>sef</div>\r\n  '
       logger.info('[TextOverlay] before html: ' + this.text)
       this.text = HTMLUtil.removeHTML(this.text)
       logger.info('[TextOverlay] after html: ' + this.text)
-      // logger.info(`[TextOverlay] reading: ${this.textBG}`)
-      // this.image = fs.readFileSync(this.textBG);
-      // image = process(image);
-      // const dataUri = await textToImage.generate(this.text,{
-      //   maxWidth: 600,
-      //   fontSize: 24,
-      //   fontFamily: 'Arial',
-      //   lineHeight: 30,
-      //   margin: 5,
-      //   customHeight: 120
-      //   });
-      // logger.info('[TextOverlay] text to image data: ' + dataUri)
-
-      // // strip off the data: url prefix to get just the base64-encoded bytes
-      // const data = dataUri.replace(/^data:image\/\w+;base64,/, "");
-      // const buf = Buffer.from(data, 'base64');
-      // fs.writeFileSync(this.textImage, buf);    
-
-      // registerFont("/usr/share/fonts/Arial_Rounded_MT_Bold.ttf");
 
       const textToImage = new UltimateTextToImage(this.text, {
         width: 600,
         maxWidth: 600,
-        fontSize: 24,
-        // fontFamily: 'Arial, Sans',
-        lineHeight: 30,
+        fontSize: 18,
+        minFontSize: 10,
+        fontFamily: 'Arial, Sans',
+        //lineHeight: 30,
         margin: 5,
         maxHeight: 120,
         height:120,
@@ -59,8 +40,9 @@ module.exports = class ImageModel {
         valign:'middle'
       })
       await textToImage.render().toFile(this.textImage);
-
-      logger.info('[TextOverlay] text image file save to: ' + this.textImage)
+      const measuredParagraph = textToImage.measuredParagraph; 
+      // logger.info(`[XXXXXXXXXXXXXXXXXXX] ${JSON.stringify(measuredParagraph)}`)
+      logger.info('[TextOverlay] combined text image file save to: ' + this.textImage)
     }
     catch(err) {
       logger.info('[TextOverlay] Error: ' + err)

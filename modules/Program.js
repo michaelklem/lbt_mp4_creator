@@ -126,25 +126,8 @@ class Program {
         logger.info('Done processing pages')
 
         if (fs.existsSync(this.lastImagePath)) {
-            // await this.createImage(
-            //   HTMLUtil.removeHTML(page.body),
-            //   this.tempStoryDirectoryPrefix + "text" + page.page_num + ".png",
-            //   this.storyImagesDirectoryPrefix + page.image_path,
-            //   this.tempImagesDirectoryPrefix + page.image_path,
-            //   this.remoteImageFilePath + page.image_path,
-            //   image_file_name, this.pageCounter + ".png", page.image_path);
-            
-            // //666
-            // await this.createAudioFile(
-            //   null,
-            //   this.tempAudioDirectoryPrefix,
-            //   null,
-            //   "last.flv");
-
+            ++this.pageCounter;
             await this.combineImageAndAudio(this.lastImagePath, null);
-
-            // createImage(text, textImage, taleImage*, destPath*, remoteFile "last", combineImage, destFileName)
-
         }
 
         // concatenate all image and audio mpg files into a single mpg file
