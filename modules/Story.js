@@ -11,24 +11,19 @@ class Story extends QueryRunner {
 
 
   async loadStory() {
-    try {      
-      // const query = `select * from stories where story_id = ?`;
-      const query = `select s.*, u.bucket_path from stories s
-      join users u on u.user_id = s.user_id
-      where s.story_id = ?`;
-			let results = await this.query(query, [this.story_id]);
-      if (results && results[0]) {
-        logger.info(`story data: ${JSON.stringify(results[0])}`)
-      }
-
+    const query = `select s.*, u.bucket_path from stories s
+    join users u on u.user_id = s.user_id
+    where s.story_id = ?`;
+    let results = await this.query(query, [this.story_id]);
+    if (results && results[0]) {
+      logger.info(`story data: ${JSON.stringify(results[0])}`)
       this.data = results[0];
+    }
+    else {
+      throw new Error(`Story ${this.story_id} was not found`);
+    }
 
-      return this;
-    } 
-    catch(err) {
-      logger.error(`[getNextStory] Error: ${err}`);
-      return null;
-    }  
+    return this;
   }
 
   async setFilename(title) {
@@ -37,7 +32,7 @@ class Story extends QueryRunner {
 			await this.query(query, [title, this.story_id]);
     } 
     catch(err) {
-      logger.error(`[getNextStory] Error: ${err}`);
+      logger.error(`[setFilename]: ${err}`);
       return null;
     }  
   }

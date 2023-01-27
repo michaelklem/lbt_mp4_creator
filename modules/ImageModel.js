@@ -62,7 +62,7 @@ module.exports = class ImageModel {
 
       const dataUri = await mergeImages([
         { src: this.taleImage, x: 0, y: 0 },
-        { src: this.textImage, x: 0, y: 420 } // the text image is rendered under the page art
+        { src: this.textImage, x: 0, y: 421 } // the text image is rendered under the page art
       ], {
         Canvas: Canvas,
         Image: Image,

@@ -12,30 +12,19 @@ module.exports = class DataModel extends QueryRunner {
     let nextStory = null;
 
     try {
-      // const query = `select story_id, mp4_id from mp4_queue where is_complied = 0 AND is_processing = 0 AND is_error=0 LIMIT 1`;
       const query = `select story_id, mp4_id from mp4_queue where process_as_mp4 = 1 LIMIT 1`;
-			// const query = `select s.story_id, mq.mp4_id, u.user_id, u.bucket_path from 
-      //   stories s 
-      //   join
-      //   (
-      //   select story_id, mp4_id from mp4_queue where process_as_mp4 = 1 LIMIT 1
-      //   ) mq on mq.story_id = s.story_id
-      //   join users u on u.user_id 
-      //   where u.user_id = s.user_id`;
-
       let results = await this.query(query);
       if (results && results[0]) {
         const nextStoryId =  results[0].story_id;
         nextStory = await this.getStory( nextStoryId )
         return {"story":nextStory, "mp4_id":results[0].mp4_id};
-        // return {"story":nextStory, "mp4_id":results[0].mp4_id, "user_id":results[0].user_id, "user_bucket_path":results[0].bucket_path};
       }
       else {
         return null;
       }
     } 
     catch(err) {
-      logger.error(`[getNextStory] Error: ${err}`);
+      logger.error(`[getNextStory]: ${err}`);
       return null;
     }
   }
@@ -60,15 +49,9 @@ module.exports = class DataModel extends QueryRunner {
   }
 
   async getStory(storyId) {
-    try {
-      const s = new Story(storyId);
-      await s.loadStory()
-      return s;
-    } 
-    catch(err) {
-      logger.error(`[getNextStory] Error: ${err}`);
-      return null;
-    }
+    const s = new Story(storyId);
+    await s.loadStory()
+    return s;
   }  
 
   async startProcessing(storyId) {
@@ -115,31 +98,6 @@ module.exports = class DataModel extends QueryRunner {
     catch(err) {
       logger.error(`[videoCompiled] Error: ${err}`);
     }
-    /*
-		MP4FilesDao _dao = MP4FilesDaoFactory.create();
-		story.setIsProcessing((short)0);
-		story.setIsComplied((short)1);
-		story.setDateComplied(new Date());
-		story.setProcessAsMp4((short)0);
-		story.setDateComplied(new Date());
-		story.setMp4JobCompletedDate(new Date());
-		
-		Stories nextStory = story.getStory();
-		story.setFilename(nextStory.getFilename());
-		try {
-			_dao.update(story.createPk(), story);
-		} catch (MP4FilesDaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		// if buyer_user_id == story->user_id
-		// then set the process_as_mp4 flag for the story
-		// this will prevent the user from re-issuing a story to be processed
-		if (story.getBuyerUserId() == story.getStory().getUserId())
-		{
-			updateStoryRecord(story.getStory());
-		}
-    */
+
   }
 }
