@@ -10,12 +10,13 @@ module.exports = class DataModel extends QueryRunner {
 
   async getNextStory() {
     let nextStory = null;
+    let nextStoryId = null;
 
     try {
       const query = `select story_id, mp4_id from mp4_queue where process_as_mp4 = 1 LIMIT 1`;
       let results = await this.query(query);
       if (results && results[0]) {
-        const nextStoryId =  results[0].story_id;
+        nextStoryId =  results[0].story_id;
         nextStory = await this.getStory( nextStoryId )
         return {"story":nextStory, "mp4_id":results[0].mp4_id};
       }
@@ -25,10 +26,22 @@ module.exports = class DataModel extends QueryRunner {
     } 
     catch(err) {
       logger.error(`[getNextStory]: ${err}`);
+      await this.markAsError(nextStoryId);
       return null;
     }
   }
 
+  async markAsError(storyId) {
+    try {
+      const query = `update mp4_queue set is_error = 1, is_processing = 0, process_as_mp4 = 0 where story_id = ?`
+			await this.query(query, [storyId]);
+    } 
+    catch(err) {
+      logger.error(`[markAsError] Error: ${err}`);
+      return null;
+    }
+  }
+  
   async getPages(story_id) {
     let pages = null;
 
