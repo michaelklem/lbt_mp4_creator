@@ -26,6 +26,18 @@ class Story extends QueryRunner {
     return this;
   }
 
+  async markAsError() {
+    try {
+      logger.info(`[markAsError] Story ${this.story_id} has an error.`);
+      const query = `update mp4_queue set is_error = 1, is_processing = 0, process_as_mp4 = 0 where story_id = ?`
+			await this.query(query, [this.story_id]);
+    } 
+    catch(err) {
+      logger.error(`[markAsError] Error: ${err}`);
+      return null;
+    }
+  }
+
   async setFilename(title) {
     try {      
       const query = `update stories set file_name = ? where story_id = ?`;

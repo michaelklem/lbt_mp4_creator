@@ -134,14 +134,14 @@ class Program {
         const output_filename = await this.buildMP4( this.concatenateFiles(), story );
 
 				await this.dm.videoCompiled(story, output_filename);
+
+        // tell the web site that we are done
+        await this.sendMessageToWebSite(story, mp4_id);
       }
       catch(err) {
-        logger.info(`[Program.compileVideo] Error: ${err.stack}`)
+        logger.info(`[Program.compileVideo]: ${err.stack}`);
+        await story.markAsError();
       }
-
-      // tell the web site that we are done
-			await this.sendMessageToWebSite(story, mp4_id);
-
     } // this.isProcessing
     else {
       logger.info(`Story: ${story.data.story_id} is already being processed.`)
@@ -154,16 +154,10 @@ class Program {
       logger.info('[sendMessageToWebSite] url: ' + url);
       await axios.post(url)
       logger.info('[sendMessageToWebSite] success');    
-        // .then((response) =>{
-        //   logger.info('[sendMessageToWebSite] sucess: ');    
-        // })
-        // .catch((error) =>{
-        //   logger.info('[sendMessageToWebSite] error: ' + err.stack);
-        // })
     }
     catch(err )
     {
-      logger.info('[sendMessageToWebSite] Error: ' + err.stack);
+      logger.info('[sendMessageToWebSite]: ' + err.stack);
     }
   }
 
